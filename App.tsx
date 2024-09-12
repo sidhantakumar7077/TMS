@@ -1,118 +1,62 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import { StyleSheet, StatusBar, Alert } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from "@react-native-community/netinfo";
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+// SplashScreen
+import SplashScreen from './src/Screens/SplashScreen/Index'
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+// No Internet Page
+import NoInternet from './src/Screens/NoInternet/Index'
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+// Auth
+import Login from './src/Screens/Auth/Login';
+import Register from './src/Screens/Auth/Register';
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+const Stack = createNativeStackNavigator()
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const App = () => {
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const [showSplash, setShowSplash] = useState(true);
+  const [access_token, setAccess_token] = useState('');
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+      setIsConnected(state.isConnected ?? false);
+    });
+    return () => {
+      unsubscribe();
+      // setTimeout(unsubscribe, 5000);
+    }
+  }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSplash(false);
+    }, 5000)
+  }, []);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
+    <NavigationContainer>
+      <StatusBar backgroundColor="#c9170a" barStyle="light-content" />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {showSplash ? (<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ presentation: 'modal', animationTypeForReplace: 'push', animation: 'slide_from_right' }} />) : null}
+        {!isConnected ? (
+          <Stack.Screen name="NoInternet" component={NoInternet} />
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Register" component={Register} />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  )
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
+export default App
