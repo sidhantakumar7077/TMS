@@ -18,6 +18,8 @@ import OtpVerify from './src/Screens/Auth/OtpVerify';
 
 // Pages
 import Dashboard from './src/Screens/Dashboard/Index'
+import SocialMedia from './src/Screens/SocialMedia/Index'
+import BankDetails from './src/Screens/BankDetails/Index'
 import Home from './src/Screens/Home/Index'
 
 const Stack = createNativeStackNavigator()
@@ -59,6 +61,8 @@ const App = () => {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="OtpVerify" component={OtpVerify} />
             <Stack.Screen name="Dashboard" component={Dashboard} />
+            <Stack.Screen name="SocialMedia" component={SocialMedia} />
+            <Stack.Screen name="BankDetails" component={BankDetails} />
             <Stack.Screen name="Home" component={Home} />
           </>
         )}

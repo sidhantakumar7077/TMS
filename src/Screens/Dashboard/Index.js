@@ -3,8 +3,10 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput } from 
 import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { launchImageLibrary } from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
+import LinearGradient from 'react-native-linear-gradient';
 
-const Index = () => {
+const Index = (props) => {
+
     const richTextAbout = useRef(); // Reference to Temple About editor
     const richTextHistory = useRef(); // Reference to Temple History editor
     const [contentAbout, setContentAbout] = useState(''); // State for Temple About content
@@ -13,32 +15,64 @@ const Index = () => {
     const [isTrustChecked, setIsTrustChecked] = useState(false);
     const [endowmentRegNumber, setEndowmentRegNumber] = useState('');
     const [trustRegNumber, setTrustRegNumber] = useState('');
-    const [endowmentDoc, setEndowmentDoc] = useState(null);
-    const [trustDoc, setTrustDoc] = useState(null);
+    const [isFocused, setIsFocused] = useState(null);
 
+    const [endowmentImageSource, setEndowmentImageSource] = useState(null);
+    const [endowmentImage, setEndowmentImage] = useState('Upload Endowment Document');
     // Handle document upload using react-native-image-picker
-    const pickDocument = async (setDocument) => {
-        try {
-            const result = await launchImageLibrary({
-                mediaType: 'mixed', // Allows both images and documents
-                includeBase64: false, // You can include this if you need base64 data
-            });
+    const selectEndowmentImage = async () => {
+        // var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        const options = {
+            title: 'Select Image',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
 
-            if (result.didCancel) {
-                console.log('User canceled the picker');
-            } else if (result.errorCode) {
-                console.log('Error picking document: ', result.errorMessage);
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
             } else {
-                const file = result.assets[0];
-                setDocument(file);
+                const source = response.assets[0]
+                setEndowmentImageSource(source);
+                setEndowmentImage(response.assets[0].fileName);
+                // console.log("selected image-=-=", response.assets[0])
             }
-        } catch (err) {
-            console.log('Unknown error:', err);
-        }
+        });
+    };
+
+    const [trustImageSource, setTrustImageSource] = useState(null);
+    const [trustImage, setTrustImage] = useState('Upload Trust Document');
+    // Handle document upload using react-native-image-picker
+    const selectTrustImage = async () => {
+        // var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        const options = {
+            title: 'Select Image',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else {
+                const source = response.assets[0]
+                setTrustImageSource(source);
+                setTrustImage(response.assets[0].fileName);
+                // console.log("selected image-=-=", response.assets[0])
+            }
+        });
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <Text style={styles.headerText}>Temple Information</Text>
 
             {/* Temple About Rich Text Editor */}
@@ -56,7 +90,7 @@ const Index = () => {
             </View>
             <RichToolbar
                 editor={richTextAbout}
-                actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.heading1, actions.insertBulletsList]}
+                actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
                 style={styles.richToolbar}
             />
 
@@ -75,68 +109,84 @@ const Index = () => {
             </View>
             <RichToolbar
                 editor={richTextHistory}
-                actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.heading1, actions.insertBulletsList]}
+                actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
                 style={styles.richToolbar}
             />
 
             {/* Endowment Checkbox */}
             <View style={styles.checkboxContainer}>
-                <CheckBox value={isEndowmentChecked} onValueChange={setIsEndowmentChecked} />
+                <CheckBox value={isEndowmentChecked} tintColors={{ true: '#0c81f5', false: '#0c81f5' }} onValueChange={setIsEndowmentChecked} />
                 <Text style={styles.checkboxLabel}>Endowment</Text>
             </View>
 
             {isEndowmentChecked && (
                 <>
+                    <Text style={[styles.label, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedLabel]}>Enter Endowment Register Number</Text>
                     <TextInput
-                        style={styles.inputField}
-                        placeholder="Enter Endowment Register Number"
+                        style={[styles.input, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedInput]}
                         value={endowmentRegNumber}
                         onChangeText={setEndowmentRegNumber}
+                        onFocus={() => setIsFocused('endowmentRegNumber')}
+                        onBlur={() => setIsFocused(null)}
                     />
-                    <TouchableOpacity
-                        style={styles.uploadButton}
-                        onPress={() => pickDocument(setEndowmentDoc)}
-                    >
-                        <Text style={styles.uploadButtonText}>
-                            {endowmentDoc ? endowmentDoc.fileName : 'Upload Endowment Document'}
-                        </Text>
+
+                    <TouchableOpacity style={styles.filePicker} onPress={selectEndowmentImage}>
+                        <TextInput
+                            style={styles.filePickerText}
+                            editable={false}
+                            placeholder={endowmentImage}
+                            placeholderTextColor={'#000'}
+                        />
+                        <View style={styles.chooseBtn}>
+                            <Text style={styles.chooseBtnText}>Choose File</Text>
+                        </View>
                     </TouchableOpacity>
                 </>
             )}
 
             {/* Trust Checkbox */}
             <View style={styles.checkboxContainer}>
-                <CheckBox value={isTrustChecked} onValueChange={setIsTrustChecked} />
+                <CheckBox value={isTrustChecked} tintColors={{ true: '#0c81f5', false: '#0c81f5' }} onValueChange={setIsTrustChecked} />
                 <Text style={styles.checkboxLabel}>Trust</Text>
             </View>
 
             {isTrustChecked && (
                 <>
+                    <Text style={[styles.label, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedLabel]}>Enter Trust Register Number</Text>
                     <TextInput
-                        style={styles.inputField}
-                        placeholder="Enter Trust Register Number"
+                        style={[styles.input, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedInput]}
                         value={trustRegNumber}
                         onChangeText={setTrustRegNumber}
+                        onFocus={() => setIsFocused('trustRegNumber')}
+                        onBlur={() => setIsFocused(null)}
                     />
-                    <TouchableOpacity
-                        style={styles.uploadButton}
-                        onPress={() => pickDocument(setTrustDoc)}
-                    >
-                        <Text style={styles.uploadButtonText}>
-                            {trustDoc ? trustDoc.fileName : 'Upload Trust Document'}
-                        </Text>
+                    <TouchableOpacity style={styles.filePicker} onPress={selectTrustImage}>
+                        <TextInput
+                            style={styles.filePickerText}
+                            editable={false}
+                            placeholder={trustImage}
+                            placeholderTextColor={'#000'}
+                        />
+                        <View style={styles.chooseBtn}>
+                            <Text style={styles.chooseBtnText}>Choose File</Text>
+                        </View>
                     </TouchableOpacity>
                 </>
             )}
 
             {/* Submit Button */}
             <TouchableOpacity
-                style={styles.submitButton}
-                onPress={() => console.log({ contentAbout, contentHistory, endowmentRegNumber, trustRegNumber, endowmentDoc, trustDoc })}
+                onPress={() => props.navigation.navigate('SocialMedia')}
+            // onPress={() => console.log({ contentAbout, contentHistory, endowmentRegNumber, trustRegNumber, endowmentImage, trustImage })}
             >
-                <Text style={styles.submitText}>Submit</Text>
+                <LinearGradient
+                    colors={['#c9170a', '#f0837f']}
+                    style={styles.submitButton}
+                >
+                    <Text style={styles.submitText}>Submit</Text>
+                </LinearGradient>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 };
 
@@ -145,7 +195,7 @@ export default Index;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
+        paddingHorizontal: 20,
         backgroundColor: '#f4f4f4',
     },
     headerText: {
@@ -163,7 +213,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     editorContainer: {
-        flex: 1,
+        minHeight: 100, // Set minHeight for the RichEditor container
         borderRadius: 10,
         backgroundColor: '#fff',
         padding: 10,
@@ -184,7 +234,7 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     richToolbar: {
-        backgroundColor: '#007bff',
+        backgroundColor: '#a9aaab',
         borderRadius: 10,
         paddingHorizontal: 10,
         paddingVertical: 5,
@@ -205,41 +255,69 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333',
     },
-    inputField: {
-        borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
-        marginBottom: 15,
-        fontSize: 16,
-        paddingVertical: 5,
-    },
-    uploadButton: {
-        backgroundColor: '#007bff',
-        paddingVertical: 10,
-        paddingHorizontal: 15,
-        borderRadius: 8,
-        alignItems: 'center',
-        marginBottom: 15,
-    },
-    uploadButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
     submitButton: {
-        backgroundColor: '#ff6347',
-        paddingVertical: 12,
-        borderRadius: 10,
+        borderRadius: 12,
+        paddingVertical: 15,
         alignItems: 'center',
-        justifyContent: 'center',
-        marginVertical: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 4,
+        elevation: 3,
+        marginVertical: 10,
     },
     submitText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
+        letterSpacing: 1,  // Spacing for the button text
+    },
+    filePicker: {
+        borderColor: '#ddd',
+        borderWidth: 1,
+        borderRadius: 10,
+        paddingLeft: 15,
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20
+    },
+    filePickerText: {
+        width: '70%',
+        height: 45,
+        lineHeight: 45,
+        color: '#000',
+    },
+    chooseBtn: {
+        backgroundColor: '#bbb',
+        width: '30%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 45,
+        borderTopRightRadius: 10,
+        borderBottomRightRadius: 10,
+    },
+    chooseBtnText: {
+        color: '#fff',
+        fontWeight: '500',
+    },
+    label: {
+        color: '#757473',
+        fontSize: 16,
+    },
+    focusedLabel: {
+        color: '#56ab2f',
+        fontSize: 16,
+        fontWeight: '500'
+    },
+    input: {
+        height: 30,
+        borderBottomWidth: 0.7,
+        borderBottomColor: '#757473',
+        marginBottom: 30,
+        color: '#000',
+    },
+    focusedInput: {
+        height: 50,
+        borderBottomColor: '#56ab2f',
+        borderBottomWidth: 2
     },
 });
