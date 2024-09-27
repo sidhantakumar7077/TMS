@@ -20,6 +20,11 @@ import OtpVerify from './src/Screens/Auth/OtpVerify';
 import Dashboard from './src/Screens/Dashboard/Index'
 import SocialMedia from './src/Screens/SocialMedia/Index'
 import BankDetails from './src/Screens/BankDetails/Index'
+import Management from './src/Screens/Management/Index'
+import Temple_festival from './src/Screens/Temple_festival/Index'
+import Temple_news from './src/Screens/Temple_news/Index'
+import Mandap_booking from './src/Screens/Mandap_booking/Index'
+import Pooja_booking from './src/Screens/Pooja_booking/Index'
 import Home from './src/Screens/Home/Index'
 
 const Stack = createNativeStackNavigator()
@@ -63,6 +68,11 @@ const App = () => {
             <Stack.Screen name="Dashboard" component={Dashboard} />
             <Stack.Screen name="SocialMedia" component={SocialMedia} />
             <Stack.Screen name="BankDetails" component={BankDetails} />
+            <Stack.Screen name="Management" component={Management} />
+            <Stack.Screen name="Temple_festival" component={Temple_festival} />
+            <Stack.Screen name="Temple_news" component={Temple_news} />
+            <Stack.Screen name="Mandap_booking" component={Mandap_booking} />
+            <Stack.Screen name="Pooja_booking" component={Pooja_booking} />
             <Stack.Screen name="Home" component={Home} />
           </>
         )}
