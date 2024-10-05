@@ -15,7 +15,7 @@ const Index = (props) => {
         <ScrollView style={styles.container}>
             <Text style={styles.headerText}>Temple Bank Details</Text>
 
-            <View style={{ width: '95%', alignSelf: 'center', flex: 1 }}>
+            <View style={styles.cardBox}>
                 {/* Bank Name Input */}
                 <Text style={[styles.label, (isFocused === 'bank_name' || bank_name !== '') && styles.focusedLabel]}>Bank Name</Text>
                 <TextInput
@@ -70,10 +70,7 @@ const Index = (props) => {
 
             {/* Submit Button */}
             <TouchableOpacity onPress={() => props.navigation.navigate('Management')}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
+                <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                     <Text style={styles.submitText}>Submit</Text>
                 </LinearGradient>
             </TouchableOpacity>
@@ -86,7 +83,6 @@ export default Index
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
         backgroundColor: '#f4f4f4',
     },
     headerText: {
@@ -96,6 +92,19 @@ const styles = StyleSheet.create({
         color: '#333',
         marginVertical: 20,
         fontFamily: 'sans-serif-medium',
+    },
+    cardBox: {
+        width: '93%',
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        padding: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginBottom: 10,
+        borderRadius: 10
     },
     label: {
         color: '#757473',
@@ -119,6 +128,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2
     },
     submitButton: {
+        width: '90%',
+        alignSelf: 'center',
         borderRadius: 12,
         paddingVertical: 15,
         alignItems: 'center',

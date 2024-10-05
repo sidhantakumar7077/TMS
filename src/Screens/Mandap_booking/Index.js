@@ -60,7 +60,7 @@ const Index = (props) => {
         <View style={styles.container}>
             <Text style={styles.headerText}>Mandap Booking</Text>
 
-            <View style={{ width: '95%', alignSelf: 'center' }}>
+            <View style={styles.cardBox}>
                 <Text style={[styles.label, (isFocused === 'mandap_name' || mandap_name !== '') && styles.focusedLabel]}>Mandap Name</Text>
                 <TextInput
                     style={[styles.input, (isFocused === 'mandap_name' || mandap_name !== '') && styles.focusedInput]}
@@ -185,7 +185,6 @@ export default Index;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
         backgroundColor: '#f4f4f4',
     },
     headerText: {
@@ -195,6 +194,19 @@ const styles = StyleSheet.create({
         color: '#333',
         marginVertical: 20,
         fontFamily: 'sans-serif-medium',
+    },
+    cardBox: {
+        width: '93%',
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        padding: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginBottom: 10,
+        borderRadius: 10
     },
     label: {
         color: '#757473',
@@ -231,6 +243,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 0,
     },
     submitButton: {
+        width: '90%',
+        alignSelf: 'center',
         borderRadius: 12,
         paddingVertical: 15,
         alignItems: 'center',

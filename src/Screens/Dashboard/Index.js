@@ -76,42 +76,46 @@ const Index = (props) => {
             <Text style={styles.headerText}>Temple Information</Text>
 
             {/* Temple About Rich Text Editor */}
-            <Text style={styles.subHeaderText}>Temple About</Text>
-            <View style={styles.editorContainer}>
-                <ScrollView style={styles.scrollView}>
-                    <RichEditor
-                        ref={richTextAbout}
-                        onChange={setContentAbout}
-                        placeholder="Write about the temple..."
-                        editorStyle={styles.editor}
-                        style={styles.richEditor}
-                    />
-                </ScrollView>
+            <View style={styles.cardBox}>
+                <Text style={styles.subHeaderText}>Temple About</Text>
+                <View style={styles.editorContainer}>
+                    <ScrollView style={styles.scrollView}>
+                        <RichEditor
+                            ref={richTextAbout}
+                            onChange={setContentAbout}
+                            placeholder="Write about the temple..."
+                            editorStyle={styles.editor}
+                            style={styles.richEditor}
+                        />
+                    </ScrollView>
+                </View>
+                <RichToolbar
+                    editor={richTextAbout}
+                    actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
+                    style={styles.richToolbar}
+                />
             </View>
-            <RichToolbar
-                editor={richTextAbout}
-                actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
-                style={styles.richToolbar}
-            />
 
             {/* Temple History Rich Text Editor */}
-            <Text style={styles.subHeaderText}>Temple History</Text>
-            <View style={styles.editorContainer}>
-                <ScrollView style={styles.scrollView}>
-                    <RichEditor
-                        ref={richTextHistory}
-                        onChange={setContentHistory}
-                        placeholder="Write the history of the temple..."
-                        editorStyle={styles.editor}
-                        style={styles.richEditor}
-                    />
-                </ScrollView>
+            <View style={styles.cardBox}>
+                <Text style={styles.subHeaderText}>Temple History</Text>
+                <View style={styles.editorContainer}>
+                    <ScrollView style={styles.scrollView}>
+                        <RichEditor
+                            ref={richTextHistory}
+                            onChange={setContentHistory}
+                            placeholder="Write the history of the temple..."
+                            editorStyle={styles.editor}
+                            style={styles.richEditor}
+                        />
+                    </ScrollView>
+                </View>
+                <RichToolbar
+                    editor={richTextHistory}
+                    actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
+                    style={styles.richToolbar}
+                />
             </View>
-            <RichToolbar
-                editor={richTextHistory}
-                actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
-                style={styles.richToolbar}
-            />
 
             {/* Endowment Checkbox */}
             <View style={styles.checkboxContainer}>
@@ -120,7 +124,7 @@ const Index = (props) => {
             </View>
 
             {isEndowmentChecked && (
-                <>
+                <View style={styles.cardBox}>
                     <Text style={[styles.label, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedLabel]}>Enter Endowment Register Number</Text>
                     <TextInput
                         style={[styles.input, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedInput]}
@@ -141,7 +145,7 @@ const Index = (props) => {
                             <Text style={styles.chooseBtnText}>Choose File</Text>
                         </View>
                     </TouchableOpacity>
-                </>
+                </View>
             )}
 
             {/* Trust Checkbox */}
@@ -151,7 +155,7 @@ const Index = (props) => {
             </View>
 
             {isTrustChecked && (
-                <>
+                <View style={styles.cardBox}>
                     <Text style={[styles.label, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedLabel]}>Enter Trust Register Number</Text>
                     <TextInput
                         style={[styles.input, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedInput]}
@@ -171,18 +175,12 @@ const Index = (props) => {
                             <Text style={styles.chooseBtnText}>Choose File</Text>
                         </View>
                     </TouchableOpacity>
-                </>
+                </View>
             )}
 
             {/* Submit Button */}
-            <TouchableOpacity
-                onPress={() => props.navigation.navigate('SocialMedia')}
-            // onPress={() => console.log({ contentAbout, contentHistory, endowmentRegNumber, trustRegNumber, endowmentImage, trustImage })}
-            >
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
+            <TouchableOpacity onPress={() => props.navigation.navigate('SocialMedia')}>
+                <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                     <Text style={styles.submitText}>Submit</Text>
                 </LinearGradient>
             </TouchableOpacity>
@@ -195,7 +193,7 @@ export default Index;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         backgroundColor: '#f4f4f4',
     },
     headerText: {
@@ -211,6 +209,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         fontWeight: 'bold',
         color: '#333',
+    },
+    cardBox: {
+        width: '93%',
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        paddingHorizontal: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginBottom: 10,
+        borderRadius: 10
     },
     editorContainer: {
         minHeight: 100, // Set minHeight for the RichEditor container
@@ -249,6 +260,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 10,
+        marginHorizontal: 20
     },
     checkboxLabel: {
         marginLeft: 8,
@@ -256,6 +268,8 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     submitButton: {
+        width: '90%',
+        alignSelf: 'center',
         borderRadius: 12,
         paddingVertical: 15,
         alignItems: 'center',
@@ -302,6 +316,7 @@ const styles = StyleSheet.create({
     label: {
         color: '#757473',
         fontSize: 16,
+        marginTop: 10
     },
     focusedLabel: {
         color: '#56ab2f',

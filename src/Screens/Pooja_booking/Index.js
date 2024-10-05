@@ -4,7 +4,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Index = () => {
+const Index = (props) => {
 
     const [pooja_name, setPooja_name] = useState('');
     const [price, setPrice] = useState('');
@@ -51,7 +51,7 @@ const Index = () => {
         <View style={styles.container}>
             <Text style={styles.headerText}>Pooja Booking</Text>
 
-            <View style={{ width: '95%', alignSelf: 'center' }}>
+            <View style={styles.cardBox}>
                 <Text style={[styles.label, (isFocused === 'pooja_name' || pooja_name !== '') && styles.focusedLabel]}>Pooja Name</Text>
                 <TextInput
                     style={[styles.input, (isFocused === 'pooja_name' || pooja_name !== '') && styles.focusedInput]}
@@ -93,7 +93,7 @@ const Index = () => {
                             <Text style={styles.chooseBtnText}>Choose Files</Text>
                         </View>
                     </TouchableOpacity>
-                    
+
                     {/* Display selected images with remove (cross) icon */}
                     <View style={styles.imagePreviewContainer}>
                         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -112,6 +112,15 @@ const Index = () => {
                     </View>
                 </View>
             </View>
+
+            <TouchableOpacity onPress={() => props.navigation.navigate('Prashad_time')}>
+                <LinearGradient
+                    colors={['#c9170a', '#f0837f']}
+                    style={styles.submitButton}
+                >
+                    <Text style={styles.submitText}>Submit</Text>
+                </LinearGradient>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -121,7 +130,6 @@ export default Index
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
         backgroundColor: '#f4f4f4',
     },
     headerText: {
@@ -131,6 +139,19 @@ const styles = StyleSheet.create({
         color: '#333',
         marginVertical: 20,
         fontFamily: 'sans-serif-medium',
+    },
+    cardBox: {
+        width: '93%',
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        padding: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginBottom: 10,
+        borderRadius: 10
     },
     label: {
         color: '#757473',
@@ -203,5 +224,23 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 12,
         padding: 2,
+    },
+    submitButton: {
+        width: '90%',
+        alignSelf: 'center',
+        borderRadius: 12,
+        paddingVertical: 15,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        elevation: 3,
+        marginVertical: 10,
+    },
+    submitText: {
+        color: '#fff',
+        fontSize: 20,
+        fontWeight: 'bold',
+        letterSpacing: 1,
     },
 })

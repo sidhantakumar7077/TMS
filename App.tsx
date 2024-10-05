@@ -25,6 +25,10 @@ import Temple_festival from './src/Screens/Temple_festival/Index'
 import Temple_news from './src/Screens/Temple_news/Index'
 import Mandap_booking from './src/Screens/Mandap_booking/Index'
 import Pooja_booking from './src/Screens/Pooja_booking/Index'
+import Prashad_time from './src/Screens/Prashad_time/Index'
+import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
+import Daily_rituals from './src/Screens/Daily_rituals/Index'
+import Darshan_time from './src/Screens/Darshan_time/Index'
 import Home from './src/Screens/Home/Index'
 
 const Stack = createNativeStackNavigator()
@@ -73,6 +77,10 @@ const App = () => {
             <Stack.Screen name="Temple_news" component={Temple_news} />
             <Stack.Screen name="Mandap_booking" component={Mandap_booking} />
             <Stack.Screen name="Pooja_booking" component={Pooja_booking} />
+            <Stack.Screen name="Prashad_time" component={Prashad_time} />
+            <Stack.Screen name="Yearly_rituals" component={Yearly_rituals} />
+            <Stack.Screen name="Daily_rituals" component={Daily_rituals} />
+            <Stack.Screen name="Darshan_time" component={Darshan_time} />
             <Stack.Screen name="Home" component={Home} />
           </>
         )}

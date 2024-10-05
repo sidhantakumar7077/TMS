@@ -1,54 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';  // Gradient effect
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, ScrollView, Dimensions } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Swiper from 'react-native-swiper';
+
+const { width } = Dimensions.get('window');
+
+// Import local images for the slider
+const image1 = require('../../assets/Image/slideImg1.jpeg');
+const image2 = require('../../assets/Image/slideImg2.jpeg');
+const image3 = require('../../assets/Image/slideImg3.jpeg');
 
 const OtpVerify = (props) => {
     const [otp, setOtp] = useState('');
-    const [isFocused, setIsFocused] = useState(false); // Track input focus state
+    const [isFocused, setIsFocused] = useState(false);
     const [showResendButton, setShowResendButton] = useState(false);
     const [countdown, setCountdown] = useState(30);
     const [showCountSpinner, setShowCountSpinner] = useState(false);
 
-    // Function to handle the countdown
+    // Images for the carousel
+    const images = [image1, image2, image3];
+
+    // Start countdown for resend OTP
     const startCountdown = () => {
-        setCountdown(30); // Reset countdown to 30 seconds
-        setShowCountSpinner(true); // Show spinner when countdown starts
-        setShowResendButton(false); // Hide Resend OTP button when countdown starts
+        setCountdown(30);
+        setShowCountSpinner(true);
+        setShowResendButton(false);
 
         const timer = setInterval(() => {
             setCountdown((prevCountdown) => {
                 if (prevCountdown === 0) {
-                    setShowResendButton(true); // Show Resend OTP button when countdown ends
-                    clearInterval(timer); // Clear the timer when countdown reaches 0
+                    setShowResendButton(true);
+                    clearInterval(timer);
                 }
                 return prevCountdown - 1;
             });
-        }, 1000); // Update countdown every second
+        }, 1000);
     };
 
     const resendOTP = async () => {
-        startCountdown(); // Start the countdown
+        startCountdown();
         setOtp('');
-    }
-
-    useEffect(() => {
-        console.log("Phone get by props", props.route.params)
-
-        // Show Resend OTP button after 30 seconds
-        const timer = setTimeout(() => {
-            setShowResendButton(true);
-        }, 30000); // 30 seconds
-
-        // Clear the timer when the component unmounts or when the dependency changes
-        return () => clearTimeout(timer);
-    }, [otp])
+    };
 
     useEffect(() => {
         startCountdown();
-    }, [])
+    }, []);
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
+
+            {/* Swiper Image Carousel */}
+            <View style={styles.imageContainer}>
+                <Swiper
+                    style={styles.wrapper}
+                    showsButtons={false}
+                    autoplay={false}
+                    autoplayTimeout={3}
+                    dotStyle={styles.dot}
+                    activeDotStyle={styles.activeDot}
+                >
+                    {images.map((image, index) => (
+                        <Image
+                            key={index}
+                            source={image}  // Use local image source
+                            style={styles.image}
+                            resizeMode="cover"
+                        />
+                    ))}
+                </Swiper>
+            </View>
+
             <Text style={styles.title}>Verify OTP</Text>
 
             {/* OTP Input */}
@@ -76,34 +97,48 @@ const OtpVerify = (props) => {
             {/* Resend OTP */}
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 25 }}>
                 <Text style={{ fontSize: 16, fontWeight: '500', color: '#000', marginRight: 7 }}>Didn't get OTP?</Text>
-                {showResendButton ?
+                {showResendButton ? (
                     <TouchableOpacity onPress={resendOTP}>
                         <Text style={{ color: '#eb344c', fontSize: 16, fontWeight: '600' }}>Resend OTP</Text>
                     </TouchableOpacity>
-                    :
+                ) : (
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={{ color: '#eb344c', fontSize: 16, fontWeight: '600' }}>{countdown !== 0 && `${countdown}s`}</Text>
-                        {showCountSpinner &&
+                        <Text style={{ color: '#eb344c', fontSize: 16, fontWeight: '600' }}>
+                            {countdown !== 0 && `${countdown}s`}
+                        </Text>
+                        {showCountSpinner && (
                             <ActivityIndicator
                                 style={{ marginLeft: 4 }}
                                 size={12}
                                 width={4}
                                 color="#eb344c"
                             />
-                        }
+                        )}
                     </View>
-                }
+                )}
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingHorizontal: 50,
+        flexGrow: 1,
+        backgroundColor: '#f0f0f0',
         justifyContent: 'center',
-        backgroundColor: '#f0f0f0',  // Light background
+        paddingVertical: 30,
+    },
+    imageContainer: {
+        width: '85%',
+        height: 400,
+        alignSelf: 'center',
+        marginBottom: 20,
+        overflow: 'hidden',
+        borderRadius: 15,
+    },
+    image: {
+        width: '100%',
+        height: '100%',
     },
     title: {
         fontSize: 40,
@@ -120,14 +155,18 @@ const styles = StyleSheet.create({
     label: {
         color: '#757473',
         fontSize: 16,
+        width: '80%',
+        alignSelf: 'center',
     },
     focusedLabel: {
         color: '#56ab2f',
         fontSize: 16,
-        fontWeight: '500'
+        fontWeight: '500',
     },
     input: {
-        height: 30,
+        width: '80%',
+        alignSelf: 'center',
+        height: 40,
         borderBottomWidth: 0.7,
         borderBottomColor: '#757473',
         marginBottom: 50,
@@ -136,9 +175,11 @@ const styles = StyleSheet.create({
     focusedInput: {
         height: 50,
         borderBottomColor: '#56ab2f',
-        borderBottomWidth: 2
+        borderBottomWidth: 2,
     },
     verifyButton: {
+        width: '85%',
+        alignSelf: 'center',
         borderRadius: 12,
         paddingVertical: 15,
         alignItems: 'center',
@@ -151,17 +192,21 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',
-        letterSpacing: 1,  // Spacing for the button text
+        letterSpacing: 1,
     },
-    resendText: {
-        fontSize: 16,
-        textAlign: 'center',
-        color: '#6B6B6B',
-        marginTop: 20,
+    dot: {
+        backgroundColor: 'rgba(255,255,255,.3)',
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        margin: 3,
     },
-    resendLink: {
-        color: '#b05348',
-        fontWeight: 'bold',
+    activeDot: {
+        backgroundColor: '#fff',
+        width: 20,
+        height: 10,
+        borderRadius: 5,
+        margin: 3,
     },
 });
 

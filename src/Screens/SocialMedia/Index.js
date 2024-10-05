@@ -97,9 +97,9 @@ const Index = (props) => {
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.headerText}>Social Media</Text>
-            <View style={{ width: '95%', alignSelf: 'center', flex: 1 }}>
+            <View style={{ width: '100%', alignSelf: 'center', flex: 1 }}>
                 {/* Image Upload Section */}
-                <View>
+                <View style={styles.cardBox}>
                     <Text style={styles.subHeaderText}>Select Images</Text>
                     <TouchableOpacity style={styles.filePicker} onPress={selectTempleImages}>
                         <TextInput
@@ -131,7 +131,7 @@ const Index = (props) => {
                 </View>
 
                 {/* Video Upload Section */}
-                <View style={{ marginBottom: 20 }}>
+                <View style={styles.cardBox}>
                     <Text style={styles.subHeaderText}>Select Videos</Text>
                     <TouchableOpacity style={styles.filePicker} onPress={selectTempleVideos}>
                         <TextInput
@@ -172,54 +172,50 @@ const Index = (props) => {
                     </View>
                 </View>
 
-                <Text style={[styles.label, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedLabel]}>Youtube URL</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedInput]}
-                    value={utubeURL}
-                    onChangeText={(text) => setUtubeURL(text)}
-                    onFocus={() => setIsFocused('utubeURL')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                <View style={styles.cardBox}>
+                    <Text style={[styles.label, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedLabel]}>Youtube URL</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedInput]}
+                        value={utubeURL}
+                        onChangeText={(text) => setUtubeURL(text)}
+                        onFocus={() => setIsFocused('utubeURL')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                {/* Address Input */}
-                <Text style={[styles.label, (isFocused === 'instaURL' || instaURL !== '') && styles.focusedLabel]}>Instagram URL</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'instaURL' || instaURL !== '') && styles.focusedInput]}
-                    value={instaURL}
-                    onChangeText={(text) => setInstaURL(text)}
-                    onFocus={() => setIsFocused('instaURL')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                    <Text style={[styles.label, (isFocused === 'instaURL' || instaURL !== '') && styles.focusedLabel]}>Instagram URL</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'instaURL' || instaURL !== '') && styles.focusedInput]}
+                        value={instaURL}
+                        onChangeText={(text) => setInstaURL(text)}
+                        onFocus={() => setIsFocused('instaURL')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                {/* Trust Contact Number Input */}
-                <Text style={[styles.label, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedLabel]}>Facebook URL</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedInput]}
-                    value={facebookURL}
-                    maxLength={10}
-                    onChangeText={(text) => setFacebookURL(text)}
-                    onFocus={() => setIsFocused('facebookURL')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                    <Text style={[styles.label, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedLabel]}>Facebook URL</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedInput]}
+                        value={facebookURL}
+                        maxLength={10}
+                        onChangeText={(text) => setFacebookURL(text)}
+                        onFocus={() => setIsFocused('facebookURL')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                {/* Creator Name Input */}
-                <Text style={[styles.label, (isFocused === 'twitterURL' || twitterURL !== '') && styles.focusedLabel]}>Twitter URL</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'twitterURL' || twitterURL !== '') && styles.focusedInput]}
-                    value={twitterURL}
-                    onChangeText={(text) => setTwitterURL(text)}
-                    onFocus={() => setIsFocused('twitterURL')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                    <Text style={[styles.label, (isFocused === 'twitterURL' || twitterURL !== '') && styles.focusedLabel]}>Twitter URL</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'twitterURL' || twitterURL !== '') && styles.focusedInput]}
+                        value={twitterURL}
+                        onChangeText={(text) => setTwitterURL(text)}
+                        onFocus={() => setIsFocused('twitterURL')}
+                        onBlur={() => setIsFocused(null)}
+                    />
+                </View>
 
             </View>
 
             {/* Submit Button */}
             <TouchableOpacity onPress={() => props.navigation.navigate('BankDetails')}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
+                <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                     <Text style={styles.submitText}>Submit</Text>
                 </LinearGradient>
             </TouchableOpacity>
@@ -232,7 +228,7 @@ export default Index;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
         backgroundColor: '#f4f4f4',
     },
     headerText: {
@@ -248,6 +244,19 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         fontWeight: 'bold',
         color: '#333',
+    },
+    cardBox: {
+        width: '93%',
+        alignSelf: 'center',
+        backgroundColor: '#fff',
+        padding: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginBottom: 10,
+        borderRadius: 10
     },
     filePicker: {
         borderColor: '#ddd',
@@ -344,6 +353,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2
     },
     submitButton: {
+        width: '90%',
+        alignSelf: 'center',
         borderRadius: 12,
         paddingVertical: 15,
         alignItems: 'center',

@@ -1,22 +1,52 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';  // Gradient effect
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import Swiper from 'react-native-swiper';
+
+const { width } = Dimensions.get('window');
+
+const image1 = require('../../assets/Image/slideImg1.jpeg');
+const image2 = require('../../assets/Image/slideImg2.jpeg');
+const image3 = require('../../assets/Image/slideImg3.jpeg');
 
 const Login = (props) => {
+    
     const [phoneNumber, setPhoneNumber] = useState('');
-    const [isFocused, setIsFocused] = useState(false); // Track input focus state
+    const [isFocused, setIsFocused] = useState(false);
 
-    // If the phone number is not empty or the input is focused, highlight the input and label
     const isActive = isFocused || phoneNumber !== '';
 
+    // Images for the carousel
+    const images = [image1, image2, image3];
+
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
+
+            {/* Swiper Image Carousel */}
+            <View style={styles.imageContainer}>
+                <Swiper
+                    style={styles.wrapper}
+                    showsButtons={false}
+                    autoplay={false}
+                    autoplayTimeout={3}
+                    dotStyle={styles.dot}
+                    activeDotStyle={styles.activeDot}
+                >
+                    {images.map((image, index) => (
+                        <Image
+                            key={index}
+                            source={image}  // Use local image source
+                            style={styles.image}
+                            resizeMode="cover"
+                        />
+                    ))}
+                </Swiper>
+            </View>
+
             <Text style={styles.title}>Login!</Text>
 
-            {/* Phone Number Label */}
-            <Text style={[styles.label, isActive && styles.focusedLabel]}>Enter your phone number</Text>
-
             {/* Phone Number Input */}
+            <Text style={[styles.label, isActive && styles.focusedLabel]}>Enter your phone number</Text>
             <TextInput
                 style={[styles.input, isActive && styles.focusedInput]}
                 value={phoneNumber}
@@ -43,16 +73,28 @@ const Login = (props) => {
                     Don't have an account? <Text style={styles.registerLink} onPress={() => props.navigation.navigate('Register')}>Register.</Text>
                 </Text>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingHorizontal: 50,
+        flexGrow: 1,
+        backgroundColor: '#f0f0f0',
         justifyContent: 'center',
-        backgroundColor: '#f0f0f0',  // Light background
+        paddingVertical: 30,
+    },
+    imageContainer: {
+        width: '85%',
+        height: 400,
+        alignSelf: 'center',
+        marginBottom: 20,
+        overflow: 'hidden',
+        borderRadius: 15,
+    },
+    image: {
+        width: '100%',
+        height: '100%',
     },
     title: {
         fontSize: 40,
@@ -69,6 +111,8 @@ const styles = StyleSheet.create({
     label: {
         color: '#757473',
         fontSize: 16,
+        width: '80%',
+        alignSelf: 'center',
     },
     focusedLabel: {
         color: '#56ab2f',
@@ -76,7 +120,9 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     input: {
-        height: 30,
+        width: '80%',
+        alignSelf: 'center',
+        height: 40,
         borderBottomWidth: 0.7,
         borderBottomColor: '#757473',
         marginBottom: 50,
@@ -88,6 +134,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2,
     },
     loginButton: {
+        width: '85%',
+        alignSelf: 'center',
         borderRadius: 12,
         paddingVertical: 15,
         alignItems: 'center',
@@ -100,17 +148,31 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 20,
         fontWeight: 'bold',
-        letterSpacing: 1,  // Spacing for the button text
+        letterSpacing: 1,
     },
     registerText: {
         fontSize: 16,
         textAlign: 'center',
         color: '#6B6B6B',
-        marginTop: 20,
+        marginTop: 15,
     },
     registerLink: {
         color: '#b05348',
         fontWeight: 'bold',
+    },
+    dot: {
+        backgroundColor: 'rgba(255,255,255,.3)',
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        margin: 3,
+    },
+    activeDot: {
+        backgroundColor: '#fff',
+        width: 20,
+        height: 10,
+        borderRadius: 5,
+        margin: 3,
     },
 });
 
