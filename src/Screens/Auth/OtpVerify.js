@@ -8,7 +8,7 @@ const { width } = Dimensions.get('window');
 // Import local images for the slider
 const image1 = require('../../assets/Image/slideImg1.jpeg');
 const image2 = require('../../assets/Image/slideImg2.jpeg');
-const image3 = require('../../assets/Image/slideImg3.jpeg');
+const image3 = require('../../assets/Image/slideImg4.jpeg');
 
 const OtpVerify = (props) => {
     const [otp, setOtp] = useState('');
@@ -85,7 +85,7 @@ const OtpVerify = (props) => {
             />
 
             {/* Verify Button */}
-            <TouchableOpacity onPress={() => props.navigation.navigate('Dashboard')}>
+            <TouchableOpacity onPress={() => props.navigation.navigate('Temple_about')}>
                 <LinearGradient
                     colors={['#c9170a', '#f0837f']}
                     style={styles.verifyButton}

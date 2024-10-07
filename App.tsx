@@ -18,6 +18,7 @@ import OtpVerify from './src/Screens/Auth/OtpVerify';
 
 // Pages
 import Dashboard from './src/Screens/Dashboard/Index'
+import Temple_about from './src/Screens/Temple_about/Index'
 import SocialMedia from './src/Screens/SocialMedia/Index'
 import BankDetails from './src/Screens/BankDetails/Index'
 import Management from './src/Screens/Management/Index'
@@ -70,6 +71,7 @@ const App = () => {
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="OtpVerify" component={OtpVerify} />
             <Stack.Screen name="Dashboard" component={Dashboard} />
+            <Stack.Screen name="Temple_about" component={Temple_about} />
             <Stack.Screen name="SocialMedia" component={SocialMedia} />
             <Stack.Screen name="BankDetails" component={BankDetails} />
             <Stack.Screen name="Management" component={Management} />

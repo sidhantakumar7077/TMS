@@ -7,7 +7,7 @@ const { width } = Dimensions.get('window');
 
 const image1 = require('../../assets/Image/slideImg1.jpeg');
 const image2 = require('../../assets/Image/slideImg2.jpeg');
-const image3 = require('../../assets/Image/slideImg3.jpeg');
+const image3 = require('../../assets/Image/slideImg4.jpeg');
 
 const Login = (props) => {
     
