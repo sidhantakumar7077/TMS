@@ -29,7 +29,7 @@ const DrawerModal = ({ visible, onClose }) => {
                                 </View>
                             </View>
                             <TouchableOpacity onPress={() => {navigation.navigate('Dashboard'); onClose();}} style={styles.drawerCell}>
-                                <Feather name="user" color={'#fff'} size={22} />
+                                <AntDesign name="home" color={'#fff'} size={25} />
                                 <Text style={styles.drawerLable}>Dashboard</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => {navigation.navigate('Temple_about'); onClose();}} style={styles.drawerCell}>

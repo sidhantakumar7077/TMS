@@ -36,6 +36,9 @@ const Index = (props) => {
             </View>
 
             <View style={styles.cardBox}>
+                <View style={{width: '100%', backgroundColor: '#cfd0d1', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, marginBottom: 10}}>
+                    <Text style={{ color: '#000', fontWeight: '700', fontSize: 18 }}>Bank Details</Text>
+                </View>
                 {/* Bank Name Input */}
                 <Text style={[styles.label, (isFocused === 'bank_name' || bank_name !== '') && styles.focusedLabel]}>Bank Name</Text>
                 <TextInput

@@ -34,6 +34,8 @@ import Home from './src/Screens/Home/Index'
 
 const Stack = createNativeStackNavigator()
 
+export const base_url = "http://temple.mandirparikrama.com/"
+
 const App = () => {
 
   const [showSplash, setShowSplash] = useState(true);

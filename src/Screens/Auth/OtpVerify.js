@@ -85,7 +85,7 @@ const OtpVerify = (props) => {
             />
 
             {/* Verify Button */}
-            <TouchableOpacity onPress={() => props.navigation.navigate('Temple_about')}>
+            <TouchableOpacity onPress={() => props.navigation.navigate('Dashboard')}>
                 <LinearGradient
                     colors={['#c9170a', '#f0837f']}
                     style={styles.verifyButton}

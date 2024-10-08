@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Swiper from 'react-native-swiper';
+import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../../../App';
 
 const { width } = Dimensions.get('window');
 
@@ -10,7 +12,11 @@ const image2 = require('../../assets/Image/slideImg2.jpeg');
 const image3 = require('../../assets/Image/slideImg4.jpeg');
 
 const Login = (props) => {
-    
+
+    const navigation = useNavigation();
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showError, setShowError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isFocused, setIsFocused] = useState(false);
 
@@ -18,6 +24,56 @@ const Login = (props) => {
 
     // Images for the carousel
     const images = [image1, image2, image3];
+
+    const templeLogin = async () => {
+        setIsLoading(true);
+        try {
+            const phoneRegex = /^\+91\d{10}$/;
+            if (phoneNumber === "" || !phoneRegex.test(phoneNumber)) {
+                setErrorMessage('Please enter a valid phone number');
+                setShowError(true);
+                setTimeout(() => {
+                    setShowError(false);
+                }, 5000);
+                setIsLoading(false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('phone', phoneNumber);
+
+            const response = await fetch(base_url + 'api/send-otp', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log('OTP sent successfully', data);
+                let phone_orderId = {
+                    phone: phone,
+                    order_id: data.order_id
+                }
+                navigation.navigate('OtpVerify', phone_orderId);
+            } else {
+                // Handle error response
+                setErrorMessage(data.message || 'Failed to send OTP. Please try again.');
+                setShowError(true);
+                setTimeout(() => {
+                    setShowError(false);
+                }, 5000);
+            }
+        } catch (error) {
+            setErrorMessage('Failed to send OTP. Please try again.');
+            setShowError(true);
+            console.log("Error", error);
+            setTimeout(() => {
+                setShowError(false);
+            }, 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -47,25 +103,36 @@ const Login = (props) => {
 
             {/* Phone Number Input */}
             <Text style={[styles.label, isActive && styles.focusedLabel]}>Enter your phone number</Text>
-            <TextInput
-                style={[styles.input, isActive && styles.focusedInput]}
-                value={phoneNumber}
-                maxLength={10}
-                onChangeText={(text) => setPhoneNumber(text)}
-                keyboardType="phone-pad"
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-            />
+            <View style={styles.inputContainer}>
+                <View style={[styles.countryCode, isActive && styles.focuseCountryCode]}>
+                    <Text style={{ color: '#000' }}>+91</Text>
+                </View>
+                <TextInput
+                    style={[styles.input, isActive && styles.focusedInput, showError && { marginBottom: 5 }]}
+                    value={phoneNumber}
+                    maxLength={10}
+                    onChangeText={(text) => setPhoneNumber(text)}
+                    keyboardType="phone-pad"
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+            </View>
+            {/* Error Message */}
+            {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
 
             {/* Log In Button */}
-            <TouchableOpacity onPress={() => { props.navigation.navigate('OtpVerify') }}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.loginButton}
-                >
-                    <Text style={styles.loginButtonText}>Log In</Text>
-                </LinearGradient>
-            </TouchableOpacity>
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#c80100" />
+            ) : (
+                <TouchableOpacity onPress={() => {props.navigation.navigate('OtpVerify')}}>
+                    <LinearGradient
+                        colors={['#c9170a', '#f0837f']}
+                        style={styles.loginButton}
+                    >
+                        <Text style={styles.loginButtonText}>Log In</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            )}
 
             {/* Register Link */}
             <View>
@@ -119,14 +186,39 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
     },
-    input: {
+    inputContainer: {
         width: '80%',
+        alignSelf: 'center',
+        flexDirection: 'row',
+        marginTop: 10
+    },
+    countryCode: {
+        backgroundColor: '#dbdbd9',
+        width: '15%',
+        height: 34,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 5.7,
+        borderBottomWidth: 0.7,
+        borderBlockColor: '#757473',
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5
+    },
+    focuseCountryCode: {
+        height: 45,
+        marginTop: 5,
+        borderBottomWidth: 2,
+        borderBlockColor: '#56ab2f',
+    },
+    input: {
+        width: '85%',
         alignSelf: 'center',
         height: 40,
         borderBottomWidth: 0.7,
         borderBottomColor: '#757473',
         marginBottom: 50,
         color: '#000',
+        paddingLeft: 10
     },
     focusedInput: {
         height: 50,
@@ -173,6 +265,14 @@ const styles = StyleSheet.create({
         height: 10,
         borderRadius: 5,
         margin: 3,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 15,
+        fontWeight: '600',
+        letterSpacing: 0.5,
+        marginLeft: 40,
+        marginBottom: 30
     },
 });
 
