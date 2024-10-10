@@ -30,7 +30,7 @@ const Index = (props) => {
     ]);
 
     const [mandapImages, setMandapImages] = useState([]);
-    const [mandapImageCount, setMandapImageCount] = useState('Upload Mandap Images');
+    const [mandapImageCount, setMandapImageCount] = useState('Select Images');
 
     // Handle image selection using react-native-image-picker
     const selectTempleImages = async () => {
@@ -53,7 +53,7 @@ const Index = (props) => {
             } else {
                 const selectedImages = response.assets;
                 setMandapImages([...mandapImages, ...selectedImages]); // Add new images to the array
-                setMandapImageCount(`Uploaded ${mandapImages.length + selectedImages.length} Images`);
+                setMandapImageCount(`Select ${mandapImages.length + selectedImages.length} Images`);
             }
         });
     };
@@ -62,7 +62,7 @@ const Index = (props) => {
     const removeImage = (indexToRemove) => {
         const updatedImages = mandapImages.filter((_, index) => index !== indexToRemove);
         setMandapImages(updatedImages);
-        setMandapImageCount(updatedImages.length > 0 ? `Uploaded ${updatedImages.length} Images` : 'Upload Mandap Images');
+        setMandapImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
     };
 
     return (
@@ -79,123 +79,128 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <ScrollView style={{ flex: 1 }}>
+                <View style={styles.topBanner}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+                </View>
 
-            <View style={styles.cardBox}>
-                <Text style={[styles.label, (isFocused === 'mandap_name' || mandap_name !== '') && styles.focusedLabel]}>Mandap Name</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'mandap_name' || mandap_name !== '') && styles.focusedInput]}
-                    value={mandap_name}
-                    onChangeText={(text) => setMandap_name(text)}
-                    onFocus={() => setIsFocused('mandap_name')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                <View style={styles.cardBox}>
+                    <Text style={[styles.label, (isFocused === 'mandap_name' || mandap_name !== '') && styles.focusedLabel]}>Mandap Name</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'mandap_name' || mandap_name !== '') && styles.focusedInput]}
+                        value={mandap_name}
+                        onChangeText={(text) => setMandap_name(text)}
+                        onFocus={() => setIsFocused('mandap_name')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                {/* Mandap Type Dropdown */}
-                <Text style={[styles.label, { marginTop: -7 }, mandapType && styles.focusedLabel]}>Mandap Type</Text>
-                <DropDownPicker
-                    open={mandapTypeOpen}
-                    value={mandapType}
-                    items={mandapTypes}
-                    setOpen={setMandapTypeOpen}
-                    setValue={setMandapType}
-                    setItems={setMandapTypes}
-                    placeholder="Select Mandap Type"
-                    style={[
-                        styles.input,
-                        styles.dropdown,
-                        {
-                            borderBottomColor: mandapTypeOpen ? '#56ab2f' : '#757473',
-                            height: mandapTypeOpen ? 50 : 25,
-                            backgroundColor: '#f4f4f4',
-                            paddingHorizontal: 10,
-                            width: '103%',
-                            alignSelf: 'center'
-                        }
-                    ]}
-                    textStyle={{
-                        color: mandapType ? '#000' : '#757473',
-                        fontSize: 16,
-                    }}
-                    dropDownContainerStyle={[styles.dropdownContainer, {
-                        borderBottomColor: '#56ab2f',
-                    }]}
-                    placeholderStyle={{ color: '#757473', fontSize: 13 }}
-                    zIndex={3000}
-                    zIndexInverse={1000}
-                />
+                    {/* Mandap Type Dropdown */}
+                    <Text style={[styles.label, { marginTop: -7 }, mandapType && styles.focusedLabel]}>Mandap Type</Text>
+                    <DropDownPicker
+                        open={mandapTypeOpen}
+                        value={mandapType}
+                        items={mandapTypes}
+                        setOpen={setMandapTypeOpen}
+                        setValue={setMandapType}
+                        setItems={setMandapTypes}
+                        placeholder="Select Mandap Type"
+                        style={[
+                            styles.input,
+                            styles.dropdown,
+                            {
+                                borderBottomColor: mandapTypeOpen ? '#56ab2f' : '#757473',
+                                height: mandapTypeOpen ? 50 : 25,
+                                backgroundColor: '#f4f4f4',
+                                paddingHorizontal: 10,
+                                width: '103%',
+                                alignSelf: 'center'
+                            }
+                        ]}
+                        textStyle={{
+                            color: mandapType ? '#000' : '#757473',
+                            fontSize: 16,
+                        }}
+                        dropDownContainerStyle={[styles.dropdownContainer, {
+                            borderBottomColor: '#56ab2f',
+                        }]}
+                        placeholderStyle={{ color: '#757473', fontSize: 13 }}
+                        zIndex={3000}
+                        zIndexInverse={1000}
+                    />
 
-                {/* Conditionally render Event Name field if "Event Basis" is selected */}
-                {mandapType === 'event_basis' && (
-                    <>
-                        <Text style={[styles.label, (isFocused === 'event_name' || eventName !== '') && styles.focusedLabel]}>Event Name</Text>
-                        <TextInput
-                            style={[styles.input, (isFocused === 'event_name' || eventName !== '') && styles.focusedInput]}
-                            value={eventName}
-                            onChangeText={(text) => setEventName(text)}
-                            onFocus={() => setIsFocused('event_name')}
-                            onBlur={() => setIsFocused(null)}
-                        />
-                    </>
-                )}
+                    {/* Conditionally render Event Name field if "Event Basis" is selected */}
+                    {mandapType === 'event_basis' && (
+                        <>
+                            <Text style={[styles.label, (isFocused === 'event_name' || eventName !== '') && styles.focusedLabel]}>Event Name</Text>
+                            <TextInput
+                                style={[styles.input, (isFocused === 'event_name' || eventName !== '') && styles.focusedInput]}
+                                value={eventName}
+                                onChangeText={(text) => setEventName(text)}
+                                onFocus={() => setIsFocused('event_name')}
+                                onBlur={() => setIsFocused(null)}
+                            />
+                        </>
+                    )}
 
-                <Text style={[styles.label, (isFocused === 'price' || price !== '') && styles.focusedLabel]}>Price</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'price' || price !== '') && styles.focusedInput]}
-                    value={price}
-                    onChangeText={(text) => setPrice(text)}
-                    onFocus={() => setIsFocused('price')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                    <Text style={[styles.label, (isFocused === 'price' || price !== '') && styles.focusedLabel]}>Price</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'price' || price !== '') && styles.focusedInput]}
+                        value={price}
+                        onChangeText={(text) => setPrice(text)}
+                        onFocus={() => setIsFocused('price')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                <Text style={[styles.label, (isFocused === 'mandap_desc' || mandap_desc !== '') && styles.focusedLabel]}>Mandap Description</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'mandap_desc' || mandap_desc !== '') && styles.focusedInput]}
-                    value={mandap_desc}
-                    onChangeText={(text) => setMandap_desc(text)}
-                    onFocus={() => setIsFocused('mandap_desc')}
-                    onBlur={() => setIsFocused(null)}
-                />
-                {/* Image Upload Section */}
-                <View>
-                    <Text style={[styles.label, (mandapImageCount !== 'Upload Mandap Images') && styles.focusedLabel]}>Select Mandap Images</Text>
-                    <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
-                        <TextInput
-                            style={styles.filePickerText}
-                            editable={false}
-                            placeholder={mandapImageCount}
-                            placeholderTextColor={'#000'}
-                        />
-                        <View style={styles.chooseBtn}>
-                            <Text style={styles.chooseBtnText}>Choose Files</Text>
+                    <Text style={[styles.label, (isFocused === 'mandap_desc' || mandap_desc !== '') && styles.focusedLabel]}>Mandap Description</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'mandap_desc' || mandap_desc !== '') && styles.focusedInput]}
+                        value={mandap_desc}
+                        onChangeText={(text) => setMandap_desc(text)}
+                        onFocus={() => setIsFocused('mandap_desc')}
+                        onBlur={() => setIsFocused(null)}
+                    />
+                    {/* Image Upload Section */}
+                    <View>
+                        <Text style={[styles.label, (mandapImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Mandap Images</Text>
+                        <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
+                            <TextInput
+                                style={styles.filePickerText}
+                                editable={false}
+                                placeholder={mandapImageCount}
+                                placeholderTextColor={'#000'}
+                            />
+                            <View style={styles.chooseBtn}>
+                                <Text style={styles.chooseBtnText}>Choose Files</Text>
+                            </View>
+                        </TouchableOpacity>
+                        {/* Display selected images with remove (cross) icon */}
+                        <View style={styles.imagePreviewContainer}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                {mandapImages.length > 0 ? (
+                                    mandapImages.map((image, index) => (
+                                        <View key={index} style={styles.imageWrapper}>
+                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                            {/* Cross icon to remove the image */}
+                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
+                                                <Icon name="cancel" size={24} color="red" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    ))
+                                ) : null}
+                            </ScrollView>
                         </View>
-                    </TouchableOpacity>
-                    {/* Display selected images with remove (cross) icon */}
-                    <View style={styles.imagePreviewContainer}>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {mandapImages.length > 0 ? (
-                                mandapImages.map((image, index) => (
-                                    <View key={index} style={styles.imageWrapper}>
-                                        <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                        {/* Cross icon to remove the image */}
-                                        <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                            <Icon name="cancel" size={24} color="red" />
-                                        </TouchableOpacity>
-                                    </View>
-                                ))
-                            ) : null}
-                        </ScrollView>
                     </View>
                 </View>
-            </View>
 
-            <TouchableOpacity onPress={() => props.navigation.navigate('Pooja_booking')}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
-                    <Text style={styles.submitText}>Submit</Text>
-                </LinearGradient>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Pooja_booking')}>
+                    <LinearGradient
+                        colors={['#c9170a', '#f0837f']}
+                        style={styles.submitButton}
+                    >
+                        <Text style={styles.submitText}>Submit</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </ScrollView>
         </View>
     )
 }
@@ -206,6 +211,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4',
+    },
+    topBanner: {
+        width: '93%',
+        alignSelf: 'center',
+        height: 150,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     headerPart: {
         width: '100%',

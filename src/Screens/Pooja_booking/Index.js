@@ -21,7 +21,7 @@ const Index = (props) => {
     const [isFocused, setIsFocused] = useState(null);
 
     const [poojaImages, setPoojaImages] = useState([]);
-    const [poojaImageCount, setPoojaImageCount] = useState('Upload Pooja Images');
+    const [poojaImageCount, setPoojaImageCount] = useState('Select Images');
 
     // Handle image selection using react-native-image-picker
     const selectTempleImages = async () => {
@@ -44,7 +44,7 @@ const Index = (props) => {
             } else {
                 const selectedImages = response.assets;
                 setPoojaImages([...poojaImages, ...selectedImages]); // Add new images to the array
-                setPoojaImageCount(`Uploaded ${poojaImages.length + selectedImages.length} Images`);
+                setPoojaImageCount(`Select ${poojaImages.length + selectedImages.length} Images`);
             }
         });
     };
@@ -53,7 +53,7 @@ const Index = (props) => {
     const removeImage = (indexToRemove) => {
         const updatedImages = poojaImages.filter((_, index) => index !== indexToRemove);
         setPoojaImages(updatedImages);
-        setPoojaImageCount(updatedImages.length > 0 ? `Uploaded ${updatedImages.length} Images` : 'Upload Pooja Images');
+        setPoojaImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
     };
 
     return (
@@ -70,77 +70,82 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <ScrollView style={{ flex: 1 }}>
+                <View style={styles.topBanner}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+                </View>
 
-            <View style={styles.cardBox}>
-                <Text style={[styles.label, (isFocused === 'pooja_name' || pooja_name !== '') && styles.focusedLabel]}>Pooja Name</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'pooja_name' || pooja_name !== '') && styles.focusedInput]}
-                    value={pooja_name}
-                    onChangeText={(text) => setPooja_name(text)}
-                    onFocus={() => setIsFocused('pooja_name')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                <View style={styles.cardBox}>
+                    <Text style={[styles.label, (isFocused === 'pooja_name' || pooja_name !== '') && styles.focusedLabel]}>Pooja Name</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'pooja_name' || pooja_name !== '') && styles.focusedInput]}
+                        value={pooja_name}
+                        onChangeText={(text) => setPooja_name(text)}
+                        onFocus={() => setIsFocused('pooja_name')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                <Text style={[styles.label, (isFocused === 'pooja_desc' || pooja_desc !== '') && styles.focusedLabel]}>Pooja Description</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'pooja_desc' || pooja_desc !== '') && styles.focusedInput]}
-                    value={pooja_desc}
-                    onChangeText={(text) => setPooja_desc(text)}
-                    onFocus={() => setIsFocused('pooja_desc')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                    <Text style={[styles.label, (isFocused === 'pooja_desc' || pooja_desc !== '') && styles.focusedLabel]}>Pooja Description</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'pooja_desc' || pooja_desc !== '') && styles.focusedInput]}
+                        value={pooja_desc}
+                        onChangeText={(text) => setPooja_desc(text)}
+                        onFocus={() => setIsFocused('pooja_desc')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                <Text style={[styles.label, (isFocused === 'price' || price !== '') && styles.focusedLabel]}>Price</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'price' || price !== '') && styles.focusedInput]}
-                    value={price}
-                    onChangeText={(text) => setPrice(text)}
-                    onFocus={() => setIsFocused('price')}
-                    onBlur={() => setIsFocused(null)}
-                />
+                    <Text style={[styles.label, (isFocused === 'price' || price !== '') && styles.focusedLabel]}>Price</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'price' || price !== '') && styles.focusedInput]}
+                        value={price}
+                        onChangeText={(text) => setPrice(text)}
+                        onFocus={() => setIsFocused('price')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                {/* Image Upload Section */}
-                <View>
-                    <Text style={[styles.label, (poojaImageCount !== 'Upload Pooja Images') && styles.focusedLabel]}>Select Pooja Images</Text>
-                    <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
-                        <TextInput
-                            style={styles.filePickerText}
-                            editable={false}
-                            placeholder={poojaImageCount}
-                            placeholderTextColor={'#000'}
-                        />
-                        <View style={styles.chooseBtn}>
-                            <Text style={styles.chooseBtnText}>Choose Files</Text>
+                    {/* Image Upload Section */}
+                    <View>
+                        <Text style={[styles.label, (poojaImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Pooja Images</Text>
+                        <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
+                            <TextInput
+                                style={styles.filePickerText}
+                                editable={false}
+                                placeholder={poojaImageCount}
+                                placeholderTextColor={'#000'}
+                            />
+                            <View style={styles.chooseBtn}>
+                                <Text style={styles.chooseBtnText}>Choose Files</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                        {/* Display selected images with remove (cross) icon */}
+                        <View style={styles.imagePreviewContainer}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                {poojaImages.length > 0 ? (
+                                    poojaImages.map((image, index) => (
+                                        <View key={index} style={styles.imageWrapper}>
+                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                            {/* Cross icon to remove the image */}
+                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
+                                                <Icon name="cancel" size={24} color="red" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    ))
+                                ) : null}
+                            </ScrollView>
                         </View>
-                    </TouchableOpacity>
-
-                    {/* Display selected images with remove (cross) icon */}
-                    <View style={styles.imagePreviewContainer}>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {poojaImages.length > 0 ? (
-                                poojaImages.map((image, index) => (
-                                    <View key={index} style={styles.imageWrapper}>
-                                        <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                        {/* Cross icon to remove the image */}
-                                        <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                            <Icon name="cancel" size={24} color="red" />
-                                        </TouchableOpacity>
-                                    </View>
-                                ))
-                            ) : null}
-                        </ScrollView>
                     </View>
                 </View>
-            </View>
 
-            <TouchableOpacity onPress={() => props.navigation.navigate('Prashad_time')}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
-                    <Text style={styles.submitText}>Submit</Text>
-                </LinearGradient>
-            </TouchableOpacity>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Prashad_time')}>
+                    <LinearGradient
+                        colors={['#c9170a', '#f0837f']}
+                        style={styles.submitButton}
+                    >
+                        <Text style={styles.submitText}>Submit</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </ScrollView>
         </View>
     )
 }
@@ -151,6 +156,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4',
+    },
+    topBanner: {
+        width: '93%',
+        alignSelf: 'center',
+        height: 150,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     headerPart: {
         width: '100%',

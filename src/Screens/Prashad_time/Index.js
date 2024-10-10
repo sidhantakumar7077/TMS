@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, ScrollView, Image } from 'react-native';
 import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import DatePicker from 'react-native-date-picker';
@@ -53,7 +53,7 @@ const Index = (props) => {
     };
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -66,152 +66,156 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-
-            <View style={styles.cardBox}>
-                <Text style={[styles.label, startTime && styles.focusedLabel]}>Prasad Start Time</Text>
-                <TouchableOpacity onPress={() => setOpenStartPicker(true)}>
-                    <TextInput
-                        style={[styles.input, startTime && styles.focusedInput]}
-                        value={
-                            startTime
-                                ? startTime.toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: true,
-                                })
-                                : ''
-                        }
-                        placeholder="Select Start Time"
-                        placeholderTextColor={'#7d7b7a'}
-                        editable={false}
-                    />
-                </TouchableOpacity>
-
-                <Text style={[styles.label, endTime && styles.focusedLabel]}>Prasad End Time</Text>
-                <TouchableOpacity onPress={() => setOpenEndPicker(true)}>
-                    <TextInput
-                        style={[styles.input, endTime && styles.focusedInput, timeError && { borderBottomColor: 'red' }]}
-                        value={
-                            endTime
-                                ? endTime.toLocaleTimeString([], {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                    hour12: true,
-                                })
-                                : ''
-                        }
-                        placeholder="Select End Time"
-                        placeholderTextColor={'#7d7b7a'}
-                        editable={false}
-                    />
-                </TouchableOpacity>
-                {timeError && <Text style={styles.errorText}>{timeError}</Text>}
-            </View>
-
-            <DatePicker
-                modal
-                mode="time"
-                open={openStartPicker}
-                date={startTime || new Date()}
-                onConfirm={(time) => {
-                    setOpenStartPicker(false);
-                    setStartTime(time);
-                }}
-                onCancel={() => setOpenStartPicker(false)}
-            />
-
-            <DatePicker
-                modal
-                mode="time"
-                open={openEndPicker}
-                date={endTime || new Date()}
-                onConfirm={(time) => {
-                    setOpenEndPicker(false);
-                    validateEndTime(time);
-                }}
-                onCancel={() => setOpenEndPicker(false)}
-            />
-
-            <View style={styles.checkboxContainer}>
-                <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => setIsOnlineOrderAvailable(!isOnlineOrderAvailable)}
-                >
-                    <View style={isOnlineOrderAvailable ? styles.checked : styles.unchecked} />
-                </TouchableOpacity>
-                <Text style={styles.checkboxLabel}>Do your Temple Provide Online Order</Text>
-            </View>
-
-            {isOnlineOrderAvailable && prasads.map((prasad, index) => (
-                <View key={index}>
-                    <View style={styles.cardBox}>
-                        <Text style={[styles.label, prasad.name && styles.focusedLabel]}>Prasad Name</Text>
+            <ScrollView style={{ flex: 1 }}>
+                <View style={styles.topBanner}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+                </View>
+                <View style={styles.cardBox}>
+                    <Text style={[styles.label, startTime && styles.focusedLabel]}>Prasad Start Time</Text>
+                    <TouchableOpacity onPress={() => setOpenStartPicker(true)}>
                         <TextInput
-                            style={[styles.input, prasad.name && styles.focusedInput]}
-                            placeholder="Enter Prasad Name"
+                            style={[styles.input, startTime && styles.focusedInput]}
+                            value={
+                                startTime
+                                    ? startTime.toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                    })
+                                    : ''
+                            }
+                            placeholder="Select Start Time"
                             placeholderTextColor={'#7d7b7a'}
-                            value={prasad.name}
-                            onChangeText={(text) => updatePrasad(index, 'name', text)}
+                            editable={false}
                         />
+                    </TouchableOpacity>
 
-                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                            <View style={{ flex: 1 }}>
-                                <Text style={[styles.label, prasad.price && styles.focusedLabel]}>Prasad Price</Text>
-                                <TextInput
-                                    style={[styles.input, prasad.price && styles.focusedInput]}
-                                    placeholder="Enter Prasad Price"
-                                    placeholderTextColor={'#7d7b7a'}
-                                    value={prasad.price}
-                                    onChangeText={(text) => updatePrasad(index, 'price', text)}
-                                    keyboardType="numeric"
-                                />
+                    <Text style={[styles.label, endTime && styles.focusedLabel]}>Prasad End Time</Text>
+                    <TouchableOpacity onPress={() => setOpenEndPicker(true)}>
+                        <TextInput
+                            style={[styles.input, endTime && styles.focusedInput, timeError && { borderBottomColor: 'red' }]}
+                            value={
+                                endTime
+                                    ? endTime.toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                    })
+                                    : ''
+                            }
+                            placeholder="Select End Time"
+                            placeholderTextColor={'#7d7b7a'}
+                            editable={false}
+                        />
+                    </TouchableOpacity>
+                    {timeError && <Text style={styles.errorText}>{timeError}</Text>}
+                </View>
+
+                <DatePicker
+                    modal
+                    mode="time"
+                    open={openStartPicker}
+                    date={startTime || new Date()}
+                    onConfirm={(time) => {
+                        setOpenStartPicker(false);
+                        setStartTime(time);
+                    }}
+                    onCancel={() => setOpenStartPicker(false)}
+                />
+
+                <DatePicker
+                    modal
+                    mode="time"
+                    open={openEndPicker}
+                    date={endTime || new Date()}
+                    onConfirm={(time) => {
+                        setOpenEndPicker(false);
+                        validateEndTime(time);
+                    }}
+                    onCancel={() => setOpenEndPicker(false)}
+                />
+
+                <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                        style={styles.checkbox}
+                        onPress={() => setIsOnlineOrderAvailable(!isOnlineOrderAvailable)}
+                    >
+                        <View style={isOnlineOrderAvailable ? styles.checked : styles.unchecked} />
+                    </TouchableOpacity>
+                    <Text style={styles.checkboxLabel}>Do your Temple Provide Online Order</Text>
+                </View>
+
+                {isOnlineOrderAvailable && prasads.map((prasad, index) => (
+                    <View key={index}>
+                        <View style={styles.cardBox}>
+                            <Text style={[styles.label, prasad.name && styles.focusedLabel]}>Prasad Name</Text>
+                            <TextInput
+                                style={[styles.input, prasad.name && styles.focusedInput]}
+                                placeholder="Enter Prasad Name"
+                                placeholderTextColor={'#7d7b7a'}
+                                value={prasad.name}
+                                onChangeText={(text) => updatePrasad(index, 'name', text)}
+                            />
+
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={[styles.label, prasad.price && styles.focusedLabel]}>Prasad Price</Text>
+                                    <TextInput
+                                        style={[styles.input, prasad.price && styles.focusedInput]}
+                                        placeholder="Enter Prasad Price"
+                                        placeholderTextColor={'#7d7b7a'}
+                                        value={prasad.price}
+                                        onChangeText={(text) => updatePrasad(index, 'price', text)}
+                                        keyboardType="numeric"
+                                    />
+                                </View>
+
+                                {index === prasads.length - 1 && (
+                                    <TouchableOpacity onPress={addPrasad} style={styles.iconButton}>
+                                        <Entypo name="squared-plus" size={28} color="#56ab2f" />
+                                    </TouchableOpacity>
+                                )}
+
+                                {index > 0 && (
+                                    <TouchableOpacity onPress={() => removePrasad(index)} style={styles.iconButton}>
+                                        <Ionicons name="remove-circle" size={28} color="#d11a1a" />
+                                    </TouchableOpacity>
+                                )}
                             </View>
-
-                            {index === prasads.length - 1 && (
-                                <TouchableOpacity onPress={addPrasad} style={styles.iconButton}>
-                                    <Entypo name="squared-plus" size={28} color="#56ab2f" />
-                                </TouchableOpacity>
-                            )}
-
-                            {index > 0 && (
-                                <TouchableOpacity onPress={() => removePrasad(index)} style={styles.iconButton}>
-                                    <Ionicons name="remove-circle" size={28} color="#d11a1a" />
-                                </TouchableOpacity>
-                            )}
                         </View>
                     </View>
+                ))}
+
+                <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                        style={styles.checkbox}
+                        onPress={() => setIsTempleProvidePreOrder(!isTempleProvidePreOrder)}
+                    >
+                        <View style={isTempleProvidePreOrder ? styles.checked : styles.unchecked} />
+                    </TouchableOpacity>
+                    <Text style={styles.checkboxLabel}>Do your Temple Provide Pre Order</Text>
                 </View>
-            ))}
 
-            <View style={styles.checkboxContainer}>
-                <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => setIsTempleProvidePreOrder(!isTempleProvidePreOrder)}
-                >
-                    <View style={isTempleProvidePreOrder ? styles.checked : styles.unchecked} />
+                <View style={styles.checkboxContainer}>
+                    <TouchableOpacity
+                        style={styles.checkbox}
+                        onPress={() => setIsTempleProvideOfflineOrder(!isTempleProvideOfflineOrder)}
+                    >
+                        <View style={isTempleProvideOfflineOrder ? styles.checked : styles.unchecked} />
+                    </TouchableOpacity>
+                    <Text style={styles.checkboxLabel}>Do your Temple Provide Online Order</Text>
+                </View>
+
+                <TouchableOpacity style={{ marginBottom: 10 }} onPress={() => { props.navigation.navigate('Darshan_time') }}>
+                    <LinearGradient
+                        colors={['#c9170a', '#f0837f']}
+                        style={styles.submitButton}
+                    >
+                        <Text style={styles.submitText}>Submit</Text>
+                    </LinearGradient>
                 </TouchableOpacity>
-                <Text style={styles.checkboxLabel}>Do your Temple Provide Pre Order</Text>
-            </View>
-
-            <View style={styles.checkboxContainer}>
-                <TouchableOpacity
-                    style={styles.checkbox}
-                    onPress={() => setIsTempleProvideOfflineOrder(!isTempleProvideOfflineOrder)}
-                >
-                    <View style={isTempleProvideOfflineOrder ? styles.checked : styles.unchecked} />
-                </TouchableOpacity>
-                <Text style={styles.checkboxLabel}>Do your Temple Provide Online Order</Text>
-            </View>
-
-            <TouchableOpacity onPress={() => { props.navigation.navigate('Darshan_time') }}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
-                    <Text style={styles.submitText}>Submit</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-        </ScrollView>
+            </ScrollView>
+        </View>
     );
 };
 
@@ -221,6 +225,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4',
+    },
+    topBanner: {
+        width: '93%',
+        alignSelf: 'center',
+        height: 150,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     headerPart: {
         width: '100%',

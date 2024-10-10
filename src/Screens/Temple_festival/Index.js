@@ -25,7 +25,7 @@ const Index = (props) => {
     const [isFocused, setIsFocused] = useState(null);
 
     const [festivalImages, setFestivalImages] = useState([]);
-    const [festivalImageCount, setFestivalImageCount] = useState('Upload Festival Images');
+    const [festivalImageCount, setFestivalImageCount] = useState('Select Images');
 
     // Handle image selection using react-native-image-picker
     const selectTempleImages = async () => {
@@ -48,7 +48,7 @@ const Index = (props) => {
             } else {
                 const selectedImages = response.assets;
                 setFestivalImages([...festivalImages, ...selectedImages]); // Add new images to the array
-                setFestivalImageCount(`Uploaded ${festivalImages.length + selectedImages.length} Images`);
+                setFestivalImageCount(`Select ${festivalImages.length + selectedImages.length} Images`);
             }
         });
     };
@@ -57,11 +57,11 @@ const Index = (props) => {
     const removeImage = (indexToRemove) => {
         const updatedImages = festivalImages.filter((_, index) => index !== indexToRemove);
         setFestivalImages(updatedImages);
-        setFestivalImageCount(updatedImages.length > 0 ? `Uploaded ${updatedImages.length} Images` : 'Upload Festival Images');
+        setFestivalImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
     };
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -74,95 +74,98 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-
-            <View style={styles.cardBox}>
-                {/* Festival Name Input */}
-                <Text style={[styles.label, (isFocused === 'festival_name' || festival_name !== '') && styles.focusedLabel]}>Festival Name</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'festival_name' || festival_name !== '') && styles.focusedInput]}
-                    value={festival_name}
-                    onChangeText={(text) => setFestival_name(text)}
-                    onFocus={() => setIsFocused('festival_name')}
-                    onBlur={() => setIsFocused(null)}
-                />
-
-                {/* Fastival Date */}
-                <Text style={[styles.label, (fastival_date !== null) && styles.focusedLabel]}>Festival Date</Text>
-                <TouchableOpacity onPress={() => setDateOpen(true)} style={[styles.datePickerStyle, (fastival_date !== null) && { marginTop: 14 }]}>
-                    <Text style={{ color: '#000', width: '90%' }}>{fastival_date ? moment(fastival_date).format("DD/MM/YYYY") : null}</Text>
-                    <Fontisto name="date" size={fastival_date !== null ? 22 : 19} color={fastival_date !== null ? '#56ab2f' : "#161c19"} />
-                </TouchableOpacity>
-                <View style={{ backgroundColor: fastival_date !== null ? '#56ab2f' : '#757473', width: '100%', height: fastival_date !== null ? 2 : 0.7, marginBottom: 30 }} />
-                <View>
-                    <DatePicker
-                        modal
-                        mode="date"
-                        open={dateOpen}
-                        date={fastival_date || new Date()}
-                        onConfirm={(data) => {
-                            setDateOpen(false)
-                            setFastival_date(data)
-                        }}
-                        onCancel={() => {
-                            setDateOpen(false);
-                        }}
-                    />
+            <ScrollView style={{ flex: 1 }}>
+                <View style={styles.topBanner}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
                 </View>
+                <View style={styles.cardBox}>
+                    {/* Festival Name Input */}
+                    <Text style={[styles.label, (isFocused === 'festival_name' || festival_name !== '') && styles.focusedLabel]}>Festival Name</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'festival_name' || festival_name !== '') && styles.focusedInput]}
+                        value={festival_name}
+                        onChangeText={(text) => setFestival_name(text)}
+                        onFocus={() => setIsFocused('festival_name')}
+                        onBlur={() => setIsFocused(null)}
+                    />
 
-                {/* Festival Description Input */}
-                <Text style={[styles.label, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedLabel]}>Festival Description</Text>
-                <TextInput
-                    style={[styles.input, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedInput]}
-                    value={festival_desc}
-                    maxLength={10}
-                    onChangeText={(text) => setFestival_desc(text)}
-                    onFocus={() => setIsFocused('festival_desc')}
-                    onBlur={() => setIsFocused(null)}
-                />
-
-                {/* Image Upload Section */}
-                <View>
-                    <Text style={[styles.label, (festivalImageCount !== 'Upload Festival Images') && styles.focusedLabel]}>Select Festival Images</Text>
-                    <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
-                        <TextInput
-                            style={styles.filePickerText}
-                            editable={false}
-                            placeholder={festivalImageCount}
-                            placeholderTextColor={'#000'}
-                        />
-                        <View style={styles.chooseBtn}>
-                            <Text style={styles.chooseBtnText}>Choose Files</Text>
-                        </View>
+                    {/* Fastival Date */}
+                    <Text style={[styles.label, (fastival_date !== null) && styles.focusedLabel]}>Festival Date</Text>
+                    <TouchableOpacity onPress={() => setDateOpen(true)} style={[styles.datePickerStyle, (fastival_date !== null) && { marginTop: 14 }]}>
+                        <Text style={{ color: '#000', width: '90%' }}>{fastival_date ? moment(fastival_date).format("DD/MM/YYYY") : null}</Text>
+                        <Fontisto name="date" size={fastival_date !== null ? 22 : 19} color={fastival_date !== null ? '#56ab2f' : "#161c19"} />
                     </TouchableOpacity>
-                    {/* Display selected images with remove (cross) icon */}
-                    <View style={styles.imagePreviewContainer}>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {festivalImages.length > 0 ? (
-                                festivalImages.map((image, index) => (
-                                    <View key={index} style={styles.imageWrapper}>
-                                        <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                        {/* Cross icon to remove the image */}
-                                        <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                            <Icon name="cancel" size={24} color="red" />
-                                        </TouchableOpacity>
-                                    </View>
-                                ))
-                            ) : null}
-                        </ScrollView>
+                    <View style={{ backgroundColor: fastival_date !== null ? '#56ab2f' : '#757473', width: '100%', height: fastival_date !== null ? 2 : 0.7, marginBottom: 30 }} />
+                    <View>
+                        <DatePicker
+                            modal
+                            mode="date"
+                            open={dateOpen}
+                            date={fastival_date || new Date()}
+                            onConfirm={(data) => {
+                                setDateOpen(false)
+                                setFastival_date(data)
+                            }}
+                            onCancel={() => {
+                                setDateOpen(false);
+                            }}
+                        />
+                    </View>
+
+                    {/* Festival Description Input */}
+                    <Text style={[styles.label, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedLabel]}>Festival Description</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedInput]}
+                        value={festival_desc}
+                        maxLength={10}
+                        onChangeText={(text) => setFestival_desc(text)}
+                        onFocus={() => setIsFocused('festival_desc')}
+                        onBlur={() => setIsFocused(null)}
+                    />
+
+                    {/* Image Upload Section */}
+                    <View>
+                        <Text style={[styles.label, (festivalImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Festival Images</Text>
+                        <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
+                            <TextInput
+                                style={styles.filePickerText}
+                                editable={false}
+                                placeholder={festivalImageCount}
+                                placeholderTextColor={'#000'}
+                            />
+                            <View style={styles.chooseBtn}>
+                                <Text style={styles.chooseBtnText}>Choose Files</Text>
+                            </View>
+                        </TouchableOpacity>
+                        {/* Display selected images with remove (cross) icon */}
+                        <View style={styles.imagePreviewContainer}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                {festivalImages.length > 0 ? (
+                                    festivalImages.map((image, index) => (
+                                        <View key={index} style={styles.imageWrapper}>
+                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                            {/* Cross icon to remove the image */}
+                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
+                                                <Icon name="cancel" size={24} color="red" />
+                                            </TouchableOpacity>
+                                        </View>
+                                    ))
+                                ) : null}
+                            </ScrollView>
+                        </View>
                     </View>
                 </View>
-            </View>
-
-            {/* Submit Button */}
-            <TouchableOpacity onPress={() => props.navigation.navigate('Temple_news')}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.submitButton}
-                >
-                    <Text style={styles.submitText}>Submit</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-        </ScrollView>
+                {/* Submit Button */}
+                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_news')}>
+                    <LinearGradient
+                        colors={['#c9170a', '#f0837f']}
+                        style={styles.submitButton}
+                    >
+                        <Text style={styles.submitText}>Submit</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
     )
 }
 
@@ -172,6 +175,19 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4',
+    },
+    topBanner: {
+        width: '93%',
+        alignSelf: 'center',
+        height: 150,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     headerPart: {
         width: '100%',

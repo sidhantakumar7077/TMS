@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { launchImageLibrary } from 'react-native-image-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
@@ -14,14 +15,12 @@ const Index = (props) => {
     const openModal = () => { setModalVisible(true) };
     const closeModal = () => { setModalVisible(false) };
 
-    const [member_name, setMember_name] = useState('');
-    const [contact_number, setContact_number] = useState('');
-    const [about, setAbout] = useState('');
-    const [designation, setDesignation] = useState('');
+    const [temple_name, setTemple_name] = useState('');
+    const [temple_about, setTemple_about] = useState('');
     const [isFocused, setIsFocused] = useState(null);
 
-    const [member_photoSource, setMember_photoSource] = useState(null);
-    const [member_photo, setMember_photo] = useState('Select Photo');
+    const [temple_photoSource, setTemple_photoSource] = useState(null);
+    const [temple_photo, setTemple_photo] = useState('Select Image');
     // Handle document upload using react-native-image-picker
     const selectTrustImage = async () => {
         // var access_token = await AsyncStorage.getItem('storeAccesstoken');
@@ -40,8 +39,8 @@ const Index = (props) => {
                 console.log('ImagePicker Error: ', response.error);
             } else {
                 const source = response.assets[0]
-                setMember_photoSource(source);
-                setMember_photo(response.assets[0].fileName);
+                setTemple_photoSource(source);
+                setTemple_photo(response.assets[0].fileName);
                 // console.log("selected image-=-=", response.assets[0])
             }
         });
@@ -53,7 +52,7 @@ const Index = (props) => {
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Feather name="chevron-left" color={'#555454'} size={30} />
-                    <Text style={styles.headerText}>Temple Trust</Text>
+                    <Text style={styles.headerText}>Temple Inside Temples</Text>
                 </TouchableOpacity>
                 <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity onPress={openModal} style={{ marginLeft: 8 }}>
@@ -63,17 +62,30 @@ const Index = (props) => {
             </View>
             <ScrollView style={{ flex: 1 }}>
                 <View style={styles.topBanner}>
-                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+                    <Image
+                        style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }}
+                        source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }}
+                    />
                 </View>
 
                 <View style={styles.cardBox}>
-                    {/* Upload Member Photo */}
-                    <Text style={[styles.label, (member_photo !== 'Select Photo') && styles.focusedLabel]}>Upload Member Photo</Text>
+                    {/* Temple Name Input */}
+                    <Text style={[styles.label, (isFocused === 'temple_name' || temple_name !== '') && styles.focusedLabel, { marginTop: 18 }]}>Inside Temple Name</Text>
+                    <TextInput
+                        style={[styles.input, (isFocused === 'temple_name' || temple_name !== '') && styles.focusedInput]}
+                        value={temple_name}
+                        onChangeText={(text) => setTemple_name(text)}
+                        onFocus={() => setIsFocused('temple_name')}
+                        onBlur={() => setIsFocused(null)}
+                    />
+
+                    {/* Upload Banner Photo */}
+                    <Text style={[styles.label, (temple_photo !== 'Select Image') && styles.focusedLabel]}>Upload Inside Temple Image</Text>
                     <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTrustImage}>
                         <TextInput
                             style={styles.filePickerText}
                             editable={false}
-                            placeholder={member_photo}
+                            placeholder={temple_photo}
                             placeholderTextColor={'#000'}
                         />
                         <View style={styles.chooseBtn}>
@@ -81,50 +93,19 @@ const Index = (props) => {
                         </View>
                     </TouchableOpacity>
 
-                    {/* Member Name Input */}
-                    <Text style={[styles.label, (isFocused === 'member_name' || member_name !== '') && styles.focusedLabel]}>Member Name</Text>
+                    {/* Temple About Input */}
+                    <Text style={[styles.label, (isFocused === 'temple_about' || temple_about !== '') && styles.focusedLabel, { marginTop: 18 }]}>Temple About</Text>
                     <TextInput
-                        style={[styles.input, (isFocused === 'member_name' || member_name !== '') && styles.focusedInput]}
-                        value={member_name}
-                        onChangeText={(text) => setMember_name(text)}
-                        onFocus={() => setIsFocused('member_name')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Contact Number Input */}
-                    <Text style={[styles.label, (isFocused === 'contact_number' || contact_number !== '') && styles.focusedLabel]}>Contact Number</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'contact_number' || contact_number !== '') && styles.focusedInput]}
-                        value={contact_number}
-                        onChangeText={(text) => setContact_number(text)}
-                        onFocus={() => setIsFocused('contact_number')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* About Input */}
-                    <Text style={[styles.label, (isFocused === 'about' || about !== '') && styles.focusedLabel]}>About</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'about' || about !== '') && styles.focusedInput]}
-                        value={about}
-                        maxLength={10}
-                        onChangeText={(text) => setAbout(text)}
-                        onFocus={() => setIsFocused('about')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Designation Input */}
-                    <Text style={[styles.label, (isFocused === 'designation' || designation !== '') && styles.focusedLabel]}>Designation</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'designation' || designation !== '') && styles.focusedInput]}
-                        value={designation}
-                        onChangeText={(text) => setDesignation(text)}
-                        onFocus={() => setIsFocused('designation')}
+                        style={[styles.input, (isFocused === 'temple_about' || temple_about !== '') && styles.focusedInput]}
+                        value={temple_about}
+                        onChangeText={(text) => setTemple_about(text)}
+                        onFocus={() => setIsFocused('temple_about')}
                         onBlur={() => setIsFocused(null)}
                     />
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_festival')}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_vendors')}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}
@@ -207,6 +188,20 @@ const styles = StyleSheet.create({
         borderBottomColor: '#757473',
         marginBottom: 30,
         color: '#000',
+    },
+    dropdown: {
+        borderWidth: 0,
+        borderBottomWidth: 0.7,
+        borderColor: '#757473',
+        paddingHorizontal: 0,
+        marginBottom: 30,
+    },
+    dropdownContainer: {
+        borderWidth: 0.7,
+        borderColor: '#757473',
+        paddingHorizontal: 0,
+        width: '102.5%',
+        alignSelf: 'center'
     },
     focusedInput: {
         height: 50,

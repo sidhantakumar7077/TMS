@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { launchImageLibrary } from 'react-native-image-picker';
+import DropDownPicker from 'react-native-dropdown-picker';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
@@ -14,14 +15,18 @@ const Index = (props) => {
     const openModal = () => { setModalVisible(true) };
     const closeModal = () => { setModalVisible(false) };
 
-    const [member_name, setMember_name] = useState('');
-    const [contact_number, setContact_number] = useState('');
-    const [about, setAbout] = useState('');
-    const [designation, setDesignation] = useState('');
+    const [desc, setDesc] = useState('');
     const [isFocused, setIsFocused] = useState(null);
 
-    const [member_photoSource, setMember_photoSource] = useState(null);
-    const [member_photo, setMember_photo] = useState('Select Photo');
+    const [bannerType, setBannerType] = useState(null);
+    const [bannerTypeOpen, setBannerTypeOpen] = useState(false);
+    const [bannerTypeList, setBannerTypeList] = useState([
+        { label: 'Web', value: 'web' },
+        { label: 'Mobile App', value: 'mobile_app' },
+    ]);
+
+    const [banner_photoSource, setBanner_photoSource] = useState(null);
+    const [banner_photo, setBanner_photo] = useState('Select Image');
     // Handle document upload using react-native-image-picker
     const selectTrustImage = async () => {
         // var access_token = await AsyncStorage.getItem('storeAccesstoken');
@@ -40,8 +45,8 @@ const Index = (props) => {
                 console.log('ImagePicker Error: ', response.error);
             } else {
                 const source = response.assets[0]
-                setMember_photoSource(source);
-                setMember_photo(response.assets[0].fileName);
+                setBanner_photoSource(source);
+                setBanner_photo(response.assets[0].fileName);
                 // console.log("selected image-=-=", response.assets[0])
             }
         });
@@ -53,7 +58,7 @@ const Index = (props) => {
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Feather name="chevron-left" color={'#555454'} size={30} />
-                    <Text style={styles.headerText}>Temple Trust</Text>
+                    <Text style={styles.headerText}>Banner</Text>
                 </TouchableOpacity>
                 <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity onPress={openModal} style={{ marginLeft: 8 }}>
@@ -63,17 +68,20 @@ const Index = (props) => {
             </View>
             <ScrollView style={{ flex: 1 }}>
                 <View style={styles.topBanner}>
-                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+                    <Image
+                        style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }}
+                        source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }}
+                    />
                 </View>
 
                 <View style={styles.cardBox}>
-                    {/* Upload Member Photo */}
-                    <Text style={[styles.label, (member_photo !== 'Select Photo') && styles.focusedLabel]}>Upload Member Photo</Text>
+                    {/* Upload Banner Photo */}
+                    <Text style={[styles.label, (banner_photo !== 'Select Image') && styles.focusedLabel]}>Upload Banner Image</Text>
                     <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTrustImage}>
                         <TextInput
                             style={styles.filePickerText}
                             editable={false}
-                            placeholder={member_photo}
+                            placeholder={banner_photo}
                             placeholderTextColor={'#000'}
                         />
                         <View style={styles.chooseBtn}>
@@ -81,50 +89,53 @@ const Index = (props) => {
                         </View>
                     </TouchableOpacity>
 
-                    {/* Member Name Input */}
-                    <Text style={[styles.label, (isFocused === 'member_name' || member_name !== '') && styles.focusedLabel]}>Member Name</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'member_name' || member_name !== '') && styles.focusedInput]}
-                        value={member_name}
-                        onChangeText={(text) => setMember_name(text)}
-                        onFocus={() => setIsFocused('member_name')}
-                        onBlur={() => setIsFocused(null)}
+                    {/* Banner Type Dropdown */}
+                    <Text style={[styles.label, bannerType && styles.focusedLabel]}>Banner Type</Text>
+                    <DropDownPicker
+                        open={bannerTypeOpen}
+                        value={bannerType}
+                        items={bannerTypeList}
+                        setOpen={setBannerTypeOpen}
+                        setValue={setBannerType}
+                        setItems={setBannerTypeList}
+                        placeholder="Select Banner Type"
+                        style={[
+                            styles.input,
+                            styles.dropdown,
+                            {
+                                borderBottomColor: bannerTypeOpen ? '#56ab2f' : '#757473',
+                                height: bannerTypeOpen ? 50 : 25,
+                                backgroundColor: '#f4f4f4',
+                                paddingHorizontal: 10,
+                                width: '103%',
+                                alignSelf: 'center'
+                            }
+                        ]}
+                        textStyle={{
+                            color: bannerType ? '#000' : '#757473',
+                            fontSize: 16,
+                        }}
+                        dropDownContainerStyle={[styles.dropdownContainer, {
+                            borderBottomColor: '#56ab2f',
+                        }]}
+                        placeholderStyle={{ color: '#757473', fontSize: 13 }}
+                        zIndex={3000}
+                        zIndexInverse={1000}
                     />
 
-                    {/* Contact Number Input */}
-                    <Text style={[styles.label, (isFocused === 'contact_number' || contact_number !== '') && styles.focusedLabel]}>Contact Number</Text>
+                    {/* Description Input */}
+                    <Text style={[styles.label, (isFocused === 'desc' || desc !== '') && styles.focusedLabel, {marginTop: 18}]}>Description</Text>
                     <TextInput
-                        style={[styles.input, (isFocused === 'contact_number' || contact_number !== '') && styles.focusedInput]}
-                        value={contact_number}
-                        onChangeText={(text) => setContact_number(text)}
-                        onFocus={() => setIsFocused('contact_number')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* About Input */}
-                    <Text style={[styles.label, (isFocused === 'about' || about !== '') && styles.focusedLabel]}>About</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'about' || about !== '') && styles.focusedInput]}
-                        value={about}
-                        maxLength={10}
-                        onChangeText={(text) => setAbout(text)}
-                        onFocus={() => setIsFocused('about')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Designation Input */}
-                    <Text style={[styles.label, (isFocused === 'designation' || designation !== '') && styles.focusedLabel]}>Designation</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'designation' || designation !== '') && styles.focusedInput]}
-                        value={designation}
-                        onChangeText={(text) => setDesignation(text)}
-                        onFocus={() => setIsFocused('designation')}
+                        style={[styles.input, (isFocused === 'desc' || desc !== '') && styles.focusedInput]}
+                        value={desc}
+                        onChangeText={(text) => setDesc(text)}
+                        onFocus={() => setIsFocused('desc')}
                         onBlur={() => setIsFocused(null)}
                     />
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_festival')}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Donation')}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}
@@ -207,6 +218,20 @@ const styles = StyleSheet.create({
         borderBottomColor: '#757473',
         marginBottom: 30,
         color: '#000',
+    },
+    dropdown: {
+        borderWidth: 0,
+        borderBottomWidth: 0.7,
+        borderColor: '#757473',
+        paddingHorizontal: 0,
+        marginBottom: 30,
+    },
+    dropdownContainer: {
+        borderWidth: 0.7,
+        borderColor: '#757473',
+        paddingHorizontal: 0,
+        width: '102.5%',
+        alignSelf: 'center'
     },
     focusedInput: {
         height: 50,

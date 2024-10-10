@@ -91,7 +91,7 @@ const Index = (props) => {
     };
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -104,153 +104,158 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <ScrollView style={{ flex: 1 }}>
+                <View style={styles.topBanner}>
+                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+                </View>
 
-            {daysOfWeek.map((day, index) => (
-                <Collapse key={index} isExpanded={activeIndex === index} onToggle={() => setActiveIndex(activeIndex === index ? null : index)}>
+                {daysOfWeek.map((day, index) => (
+                    <Collapse key={index} isExpanded={activeIndex === index} onToggle={() => setActiveIndex(activeIndex === index ? null : index)}>
 
-                    <CollapseHeader>
-                        <View style={[styles.collapseHeader, activeIndex === index && styles.activeHeader]}>
-                            <Text style={styles.collapseHeaderText}>{day}</Text>
-                            <Icon name={activeIndex === index ? 'remove' : 'add'} size={24} color="#000" />
-                        </View>
-                    </CollapseHeader>
-
-                    <CollapseBody style={styles.cardBox}>
-                        <View style={[styles.formGroup, { marginTop: 10 }]}>
-                            <Text style={[styles.label, (isFocused[day] === 'darshanName' || darshanDetails[day]?.darshanName) && styles.focusedLabel]}>Darshan Name</Text>
-                            <TextInput
-                                style={[styles.input, (isFocused[day] === 'darshanName' || darshanDetails[day]?.darshanName) && styles.focusedInput]}
-                                onFocus={() => handleFocus(day, 'darshanName')}
-                                onBlur={() => handleFocus(day, null)}
-                                onChangeText={(text) => setDarshanDetails(prevState => ({
-                                    ...prevState,
-                                    [day]: { ...prevState[day], darshanName: text }
-                                }))}
-                                value={darshanDetails[day]?.darshanName || ''}
-                            />
-                        </View>
-
-                        <View style={styles.formGroup}>
-                            <Text style={[styles.label, darshanDetails[day]?.startTime && styles.focusedLabel]}>Darshan Start Time</Text>
-                            <TouchableOpacity onPress={() => openTimePicker(day, 'start')}>
-                                <TextInput
-                                    style={[styles.input, darshanDetails[day]?.startTime && styles.focusedInput]}
-                                    value={
-                                        darshanDetails[day]?.startTime
-                                            ? darshanDetails[day].startTime.toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: true,
-                                            })
-                                            : ''
-                                    }
-                                    editable={false}
-                                />
-                            </TouchableOpacity>
-
-                            <Text style={[styles.label, darshanDetails[day]?.endTime && styles.focusedLabel]}>Darshan End Time</Text>
-                            <TouchableOpacity onPress={() => openTimePicker(day, 'end')}>
-                                <TextInput
-                                    style={[styles.input, darshanDetails[day]?.endTime && styles.focusedInput, timeError[day] && { borderBottomColor: 'red' }]}
-                                    value={
-                                        darshanDetails[day]?.endTime
-                                            ? darshanDetails[day].endTime.toLocaleTimeString([], {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                                hour12: true,
-                                            })
-                                            : ''
-                                    }
-                                    editable={false}
-                                />
-                            </TouchableOpacity>
-                            {timeError[day] && <Text style={styles.errorText}>{timeError[day]}</Text>}
-                        </View>
-
-                        {/* Start Time Picker */}
-                        <DatePicker
-                            modal
-                            mode="time"
-                            open={openStartPicker[day]}
-                            date={darshanDetails[day]?.startTime || new Date()}
-                            onConfirm={(time) => {
-                                setOpenStartPicker(prevState => ({ ...prevState, [day]: false }));
-                                setDarshanDetails(prevState => ({
-                                    ...prevState,
-                                    [day]: { ...prevState[day], startTime: time }
-                                }));
-                            }}
-                            onCancel={() => setOpenStartPicker(prevState => ({ ...prevState, [day]: false }))}
-                        />
-
-                        {/* End Time Picker */}
-                        <DatePicker
-                            modal
-                            mode="time"
-                            open={openEndPicker[day]}
-                            date={darshanDetails[day]?.endTime || new Date()}
-                            onConfirm={(time) => {
-                                setOpenEndPicker(prevState => ({ ...prevState, [day]: false }));
-                                validateEndTime(day, time);
-                            }}
-                            onCancel={() => setOpenEndPicker(prevState => ({ ...prevState, [day]: false }))}
-                        />
-
-                        {/* Image Upload Section */}
-                        <View>
-                            <Text style={styles.subHeaderText}>Darshan Images</Text>
-                            <TouchableOpacity style={styles.filePicker} onPress={() => selectDarshanImages(day)}>
-                                <TextInput
-                                    style={styles.filePickerText}
-                                    editable={false}
-                                    placeholder={`Uploaded ${darshanImages[day]?.length || 0} Images`}
-                                    placeholderTextColor={'#000'}
-                                />
-                                <View style={styles.chooseBtn}>
-                                    <Text style={styles.chooseBtnText}>Choose Files</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <View style={styles.imagePreviewContainer}>
-                                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                    {darshanImages[day]?.map((image, index) => (
-                                        <View key={index} style={styles.imageWrapper}>
-                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(day, index)}>
-                                                <Icon name="cancel" size={24} color="red" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))}
-                                </ScrollView>
+                        <CollapseHeader>
+                            <View style={[styles.collapseHeader, activeIndex === index && styles.activeHeader]}>
+                                <Text style={styles.collapseHeaderText}>{day}</Text>
+                                <Icon name={activeIndex === index ? 'remove' : 'add'} size={24} color="#000" />
                             </View>
-                        </View>
+                        </CollapseHeader>
 
-                        <View style={styles.formGroup}>
-                            <Text style={[styles.label, (isFocused[day] === 'description' || darshanDetails[day]?.description) && styles.focusedLabel]}>Description</Text>
-                            <TextInput
-                                style={[styles.textArea, (isFocused[day] === 'description' || darshanDetails[day]?.description) && styles.focusedInput]}
-                                multiline={true}
-                                onFocus={() => handleFocus(day, 'description')}
-                                onBlur={() => handleFocus(day, null)}
-                                onChangeText={(text) => setDarshanDetails(prevState => ({
-                                    ...prevState,
-                                    [day]: { ...prevState[day], description: text }
-                                }))}
-                                value={darshanDetails[day]?.description || ''}
+                        <CollapseBody style={styles.cardBox}>
+                            <View style={[styles.formGroup, { marginTop: 10 }]}>
+                                <Text style={[styles.label, (isFocused[day] === 'darshanName' || darshanDetails[day]?.darshanName) && styles.focusedLabel]}>Darshan Name</Text>
+                                <TextInput
+                                    style={[styles.input, (isFocused[day] === 'darshanName' || darshanDetails[day]?.darshanName) && styles.focusedInput]}
+                                    onFocus={() => handleFocus(day, 'darshanName')}
+                                    onBlur={() => handleFocus(day, null)}
+                                    onChangeText={(text) => setDarshanDetails(prevState => ({
+                                        ...prevState,
+                                        [day]: { ...prevState[day], darshanName: text }
+                                    }))}
+                                    value={darshanDetails[day]?.darshanName || ''}
+                                />
+                            </View>
+
+                            <View style={styles.formGroup}>
+                                <Text style={[styles.label, darshanDetails[day]?.startTime && styles.focusedLabel]}>Darshan Start Time</Text>
+                                <TouchableOpacity onPress={() => openTimePicker(day, 'start')}>
+                                    <TextInput
+                                        style={[styles.input, darshanDetails[day]?.startTime && styles.focusedInput]}
+                                        value={
+                                            darshanDetails[day]?.startTime
+                                                ? darshanDetails[day].startTime.toLocaleTimeString([], {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: true,
+                                                })
+                                                : ''
+                                        }
+                                        editable={false}
+                                    />
+                                </TouchableOpacity>
+
+                                <Text style={[styles.label, darshanDetails[day]?.endTime && styles.focusedLabel]}>Darshan End Time</Text>
+                                <TouchableOpacity onPress={() => openTimePicker(day, 'end')}>
+                                    <TextInput
+                                        style={[styles.input, darshanDetails[day]?.endTime && styles.focusedInput, timeError[day] && { borderBottomColor: 'red' }]}
+                                        value={
+                                            darshanDetails[day]?.endTime
+                                                ? darshanDetails[day].endTime.toLocaleTimeString([], {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: true,
+                                                })
+                                                : ''
+                                        }
+                                        editable={false}
+                                    />
+                                </TouchableOpacity>
+                                {timeError[day] && <Text style={styles.errorText}>{timeError[day]}</Text>}
+                            </View>
+
+                            {/* Start Time Picker */}
+                            <DatePicker
+                                modal
+                                mode="time"
+                                open={openStartPicker[day]}
+                                date={darshanDetails[day]?.startTime || new Date()}
+                                onConfirm={(time) => {
+                                    setOpenStartPicker(prevState => ({ ...prevState, [day]: false }));
+                                    setDarshanDetails(prevState => ({
+                                        ...prevState,
+                                        [day]: { ...prevState[day], startTime: time }
+                                    }));
+                                }}
+                                onCancel={() => setOpenStartPicker(prevState => ({ ...prevState, [day]: false }))}
                             />
-                        </View>
 
-                        <View style={styles.buttonRow}>
-                            <TouchableOpacity style={styles.addButton}>
-                                <Entypo name="plus" size={30} color={'#fff'} />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('Darshan_time')} style={styles.submitButton}>
-                                <Text style={styles.submitButtonText}>Submit</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </CollapseBody>
-                </Collapse>
-            ))}
-        </ScrollView>
+                            {/* End Time Picker */}
+                            <DatePicker
+                                modal
+                                mode="time"
+                                open={openEndPicker[day]}
+                                date={darshanDetails[day]?.endTime || new Date()}
+                                onConfirm={(time) => {
+                                    setOpenEndPicker(prevState => ({ ...prevState, [day]: false }));
+                                    validateEndTime(day, time);
+                                }}
+                                onCancel={() => setOpenEndPicker(prevState => ({ ...prevState, [day]: false }))}
+                            />
+
+                            {/* Image Upload Section */}
+                            <View>
+                                <Text style={styles.subHeaderText}>Darshan Images</Text>
+                                <TouchableOpacity style={styles.filePicker} onPress={() => selectDarshanImages(day)}>
+                                    <TextInput
+                                        style={styles.filePickerText}
+                                        editable={false}
+                                        placeholder={`Uploaded ${darshanImages[day]?.length || 0} Images`}
+                                        placeholderTextColor={'#000'}
+                                    />
+                                    <View style={styles.chooseBtn}>
+                                        <Text style={styles.chooseBtnText}>Choose Files</Text>
+                                    </View>
+                                </TouchableOpacity>
+                                <View style={styles.imagePreviewContainer}>
+                                    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                        {darshanImages[day]?.map((image, index) => (
+                                            <View key={index} style={styles.imageWrapper}>
+                                                <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                                <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(day, index)}>
+                                                    <Icon name="cancel" size={24} color="red" />
+                                                </TouchableOpacity>
+                                            </View>
+                                        ))}
+                                    </ScrollView>
+                                </View>
+                            </View>
+
+                            <View style={styles.formGroup}>
+                                <Text style={[styles.label, (isFocused[day] === 'description' || darshanDetails[day]?.description) && styles.focusedLabel]}>Description</Text>
+                                <TextInput
+                                    style={[styles.textArea, (isFocused[day] === 'description' || darshanDetails[day]?.description) && styles.focusedInput]}
+                                    multiline={true}
+                                    onFocus={() => handleFocus(day, 'description')}
+                                    onBlur={() => handleFocus(day, null)}
+                                    onChangeText={(text) => setDarshanDetails(prevState => ({
+                                        ...prevState,
+                                        [day]: { ...prevState[day], description: text }
+                                    }))}
+                                    value={darshanDetails[day]?.description || ''}
+                                />
+                            </View>
+
+                            <View style={styles.buttonRow}>
+                                <TouchableOpacity style={styles.addButton}>
+                                    <Entypo name="plus" size={30} color={'#fff'} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => props.navigation.navigate('Yearly_rituals')} style={styles.submitButton}>
+                                    <Text style={styles.submitButtonText}>Submit</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </CollapseBody>
+                    </Collapse>
+                ))}
+            </ScrollView>
+        </View>
     );
 };
 
@@ -260,6 +265,20 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4',
+    },
+    topBanner: {
+        width: '93%',
+        alignSelf: 'center',
+        height: 150,
+        backgroundColor: 'red',
+        borderRadius: 10,
+        marginTop: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
+        marginBottom: 15
     },
     headerPart: {
         width: '100%',
@@ -275,7 +294,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 13,
         elevation: 5,
-        marginBottom: 10
+        // marginBottom: 10
     },
     headerText: {
         color: '#000',

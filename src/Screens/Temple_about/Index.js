@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, ScrollView, TextInput } from 'react-native';
-import { RichEditor, RichToolbar, actions } from 'react-native-pell-rich-editor';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import CheckBox from '@react-native-community/checkbox';
@@ -15,8 +14,8 @@ const Index = (props) => {
     const richTextHistory = useRef(); // Reference to Temple History editor
     const [contentAbout, setContentAbout] = useState(''); // State for Temple About content
     const [contentHistory, setContentHistory] = useState(''); // State for Temple History content
-    const [isEndowmentChecked, setIsEndowmentChecked] = useState(false);
-    const [isTrustChecked, setIsTrustChecked] = useState(false);
+    const [isEndowmentChecked, setIsEndowmentChecked] = useState(true);
+    const [isTrustChecked, setIsTrustChecked] = useState(true);
     const [endowmentRegNumber, setEndowmentRegNumber] = useState('');
     const [trustRegNumber, setTrustRegNumber] = useState('');
     const [isFocused, setIsFocused] = useState(null);
@@ -81,7 +80,7 @@ const Index = (props) => {
     const closeModal = () => { setModalVisible(false) };
 
     return (
-        <ScrollView style={styles.container}>
+        <View style={styles.container}>
             <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -94,116 +93,113 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            {/* Temple About Rich Text Editor */}
-            <View style={[styles.cardBox, { marginTop: 10 }]}>
-                <Text style={styles.subHeaderText}>Temple About</Text>
-                <View style={styles.editorContainer}>
-                    <ScrollView style={styles.scrollView}>
-                        <RichEditor
-                            ref={richTextAbout}
-                            onChange={setContentAbout}
-                            placeholder="Write about the temple..."
-                            editorStyle={styles.editor}
-                            style={styles.richEditor}
-                        />
-                    </ScrollView>
-                </View>
-                <RichToolbar
-                    editor={richTextAbout}
-                    actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
-                    style={styles.richToolbar}
-                />
-            </View>
-
-            {/* Temple History Rich Text Editor */}
-            <View style={styles.cardBox}>
-                <Text style={styles.subHeaderText}>Temple History</Text>
-                <View style={styles.editorContainer}>
-                    <ScrollView style={styles.scrollView}>
-                        <RichEditor
-                            ref={richTextHistory}
-                            onChange={setContentHistory}
-                            placeholder="Write the history of the temple..."
-                            editorStyle={styles.editor}
-                            style={styles.richEditor}
-                        />
-                    </ScrollView>
-                </View>
-                <RichToolbar
-                    editor={richTextHistory}
-                    actions={[actions.setBold, actions.setItalic, actions.setUnderline, actions.insertOrderedList, actions.insertBulletsList,]}
-                    style={styles.richToolbar}
-                />
-            </View>
-
-            {/* Endowment Checkbox */}
-            <View style={styles.checkboxContainer}>
-                <CheckBox value={isEndowmentChecked} tintColors={{ true: '#0c81f5', false: '#0c81f5' }} onValueChange={setIsEndowmentChecked} />
-                <Text style={styles.checkboxLabel}>Endowment</Text>
-            </View>
-
-            {isEndowmentChecked && (
-                <View style={styles.cardBox}>
-                    <Text style={[styles.label, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedLabel]}>Enter Endowment Register Number</Text>
+            <ScrollView style={{flex: 1}}>
+                {/* Temple About Rich Text Editor */}
+                <View style={[styles.cardBox, { marginTop: 10 }]}>
+                    <Text style={styles.subHeaderText}>Temple Details</Text>
+                    <Text style={[styles.label, (isFocused === 'contentAbout' || contentAbout !== '') && styles.focusedLabel]}>Temple About</Text>
                     <TextInput
-                        style={[styles.input, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedInput]}
-                        value={endowmentRegNumber}
-                        onChangeText={setEndowmentRegNumber}
-                        onFocus={() => setIsFocused('endowmentRegNumber')}
+                        style={[styles.input, (isFocused === 'contentAbout' || contentAbout !== '') && styles.focusedInput]}
+                        value={contentAbout}
+                        onChangeText={(text) => setContentAbout(text)}
+                        onFocus={() => setIsFocused('contentAbout')}
                         onBlur={() => setIsFocused(null)}
+                        multiline={true}
+                        numberOfLines={4}
                     />
-
-                    <TouchableOpacity style={styles.filePicker} onPress={selectEndowmentImage}>
-                        <TextInput
-                            style={styles.filePickerText}
-                            editable={false}
-                            placeholder={endowmentImage}
-                            placeholderTextColor={'#000'}
-                        />
-                        <View style={styles.chooseBtn}>
-                            <Text style={styles.chooseBtnText}>Choose File</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            )}
-
-            {/* Trust Checkbox */}
-            <View style={styles.checkboxContainer}>
-                <CheckBox value={isTrustChecked} tintColors={{ true: '#0c81f5', false: '#0c81f5' }} onValueChange={setIsTrustChecked} />
-                <Text style={styles.checkboxLabel}>Trust</Text>
-            </View>
-
-            {isTrustChecked && (
-                <View style={styles.cardBox}>
-                    <Text style={[styles.label, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedLabel]}>Enter Trust Register Number</Text>
+                    <Text style={[styles.label, (isFocused === 'contentHistory' || contentHistory !== '') && styles.focusedLabel]}>Temple About</Text>
                     <TextInput
-                        style={[styles.input, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedInput]}
-                        value={trustRegNumber}
-                        onChangeText={setTrustRegNumber}
-                        onFocus={() => setIsFocused('trustRegNumber')}
+                        style={[styles.input, (isFocused === 'contentHistory' || contentHistory !== '') && styles.focusedInput]}
+                        value={contentHistory}
+                        onChangeText={(text) => setContentHistory(text)}
+                        onFocus={() => setIsFocused('contentHistory')}
                         onBlur={() => setIsFocused(null)}
+                        multiline={true}
+                        numberOfLines={4}
                     />
-                    <TouchableOpacity style={styles.filePicker} onPress={selectTrustImage}>
-                        <TextInput
-                            style={styles.filePickerText}
-                            editable={false}
-                            placeholder={trustImage}
-                            placeholderTextColor={'#000'}
-                        />
-                        <View style={styles.chooseBtn}>
-                            <Text style={styles.chooseBtnText}>Choose File</Text>
-                        </View>
-                    </TouchableOpacity>
                 </View>
-            )}
 
-            {/* Submit Button */}
-            <TouchableOpacity onPress={() => props.navigation.navigate('SocialMedia')}>
-                <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
-                    <Text style={styles.submitText}>Submit</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-        </ScrollView>
+                {/* Temple History Rich Text Editor */}
+                {/* <View style={[styles.cardBox, { marginTop: 10 }]}>
+                <Text style={[styles.label, (isFocused === 'contentHistory' || contentHistory !== '') && styles.focusedLabel]}>Temple About</Text>
+                <TextInput
+                    style={[styles.input, (isFocused === 'contentHistory' || contentHistory !== '') && styles.focusedInput]}
+                    value={contentHistory}
+                    onChangeText={(text) => setContentHistory(text)}
+                    onFocus={() => setIsFocused('contentHistory')}
+                    onBlur={() => setIsFocused(null)}
+                />
+            </View> */}
+
+                {/* Endowment Checkbox */}
+                <View style={styles.checkboxContainer}>
+                    <CheckBox value={isEndowmentChecked} tintColors={{ true: '#0c81f5', false: '#0c81f5' }} onValueChange={setIsEndowmentChecked} />
+                    <Text style={styles.checkboxLabel}>Endowment</Text>
+                </View>
+
+                {isEndowmentChecked && (
+                    <View style={styles.cardBox}>
+                        <Text style={[styles.label, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedLabel]}>Enter Endowment Register Number</Text>
+                        <TextInput
+                            style={[styles.input, (isFocused === 'endowmentRegNumber' || endowmentRegNumber !== '') && styles.focusedInput]}
+                            value={endowmentRegNumber}
+                            onChangeText={setEndowmentRegNumber}
+                            onFocus={() => setIsFocused('endowmentRegNumber')}
+                            onBlur={() => setIsFocused(null)}
+                        />
+
+                        <TouchableOpacity style={styles.filePicker} onPress={selectEndowmentImage}>
+                            <TextInput
+                                style={styles.filePickerText}
+                                editable={false}
+                                placeholder={endowmentImage}
+                                placeholderTextColor={'#000'}
+                            />
+                            <View style={styles.chooseBtn}>
+                                <Text style={styles.chooseBtnText}>Choose File</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+                {/* Trust Checkbox */}
+                <View style={styles.checkboxContainer}>
+                    <CheckBox value={isTrustChecked} tintColors={{ true: '#0c81f5', false: '#0c81f5' }} onValueChange={setIsTrustChecked} />
+                    <Text style={styles.checkboxLabel}>Trust</Text>
+                </View>
+
+                {isTrustChecked && (
+                    <View style={styles.cardBox}>
+                        <Text style={[styles.label, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedLabel]}>Enter Trust Register Number</Text>
+                        <TextInput
+                            style={[styles.input, (isFocused === 'trustRegNumber' || trustRegNumber != '') && styles.focusedInput]}
+                            value={trustRegNumber}
+                            onChangeText={setTrustRegNumber}
+                            onFocus={() => setIsFocused('trustRegNumber')}
+                            onBlur={() => setIsFocused(null)}
+                        />
+                        <TouchableOpacity style={styles.filePicker} onPress={selectTrustImage}>
+                            <TextInput
+                                style={styles.filePickerText}
+                                editable={false}
+                                placeholder={trustImage}
+                                placeholderTextColor={'#000'}
+                            />
+                            <View style={styles.chooseBtn}>
+                                <Text style={styles.chooseBtnText}>Choose File</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+                )}
+
+                {/* Submit Button */}
+                <TouchableOpacity onPress={() => props.navigation.navigate('SocialMedia')}>
+                    <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
+                        <Text style={styles.submitText}>Submit</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
     );
 };
 
