@@ -2,7 +2,6 @@ import { StyleSheet, StatusBar, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 
 // SplashScreen
@@ -33,10 +32,10 @@ import Darshan_time from './src/Screens/Darshan_time/Index'
 import Banner from './src/Screens/Banner/Index'
 import Donation from './src/Screens/Donation/Index'
 import Temple_inventory from './src/Screens/Temple_inventory/Index'
+import Temple_insideTemples from './src/Screens/Temple_insideTemples/Index'
+import Temple_vendors from './src/Screens/Temple_vendors/Index'
 import Temple_devotees from './src/Screens/Temple_devotees/Index'
 import Temple_Finance from './src/Screens/Temple_Finance/Index'
-import Temple_vendors from './src/Screens/Temple_vendors/Index'
-import Temple_insideTemples from './src/Screens/Temple_insideTemples/Index'
 
 const Stack = createNativeStackNavigator()
 
@@ -96,8 +95,8 @@ const App = () => {
             <Stack.Screen name="Temple_inventory" component={Temple_inventory} />
             <Stack.Screen name="Temple_insideTemples" component={Temple_insideTemples} />
             <Stack.Screen name="Temple_vendors" component={Temple_vendors} />
-            <Stack.Screen name="Temple_Finance" component={Temple_Finance} />
             <Stack.Screen name="Temple_devotees" component={Temple_devotees} />
+            <Stack.Screen name="Temple_Finance" component={Temple_Finance} />
           </>
         )}
       </Stack.Navigator>

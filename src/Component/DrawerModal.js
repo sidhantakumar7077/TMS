@@ -88,13 +88,17 @@ const DrawerModal = ({ visible, onClose }) => {
                                 <Feather name="user" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Inventory</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_devotees'); onClose(); }} style={styles.drawerCell}>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_insideTemples'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="user" color={'#fff'} size={22} />
-                                <Text style={styles.drawerLable}>Temple Devotees</Text>
+                                <Text style={styles.drawerLable}>Temple Inside Temple</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Temple_vendors'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="user" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Vendors</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_devotees'); onClose(); }} style={styles.drawerCell}>
+                                <Feather name="user" color={'#fff'} size={22} />
+                                <Text style={styles.drawerLable}>Temple Devotees</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Temple_Finance'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="user" color={'#fff'} size={22} />
