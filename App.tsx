@@ -20,13 +20,27 @@ import Dashboard from './src/Screens/Dashboard/Index'
 import Temple_about from './src/Screens/Temple_about/Index'
 import SocialMedia from './src/Screens/SocialMedia/Index'
 import Temple_image_video from './src/Screens/Temple_image_video/Index'
+// Temple Bank
 import BankDetails from './src/Screens/BankDetails/Index'
 import AddBank from './src/Screens/BankDetails/AddBank'
+import EditBank from './src/Screens/BankDetails/EditBank'
 import ViewBank from './src/Screens/BankDetails/ViewBank'
-import Management from './src/Screens/Management/Index'
+// Temple Festival
 import Temple_festival from './src/Screens/Temple_festival/Index'
+import AddFestival from './src/Screens/Temple_festival/AddFestival'
+import EditFestival from './src/Screens/Temple_festival/EditFestival'
+import ViewFestival from './src/Screens/Temple_festival/ViewFestival'
+// Temple News
 import Temple_news from './src/Screens/Temple_news/Index'
+import AddNews from './src/Screens/Temple_news/AddNews'
+import EditNews from './src/Screens/Temple_news/EditNews'
+// Temple Mandap
 import Mandap_booking from './src/Screens/Mandap_booking/Index'
+import AddMandap from './src/Screens/Mandap_booking/AddMandap'
+import EditMandap from './src/Screens/Mandap_booking/EditMandap'
+import ViewMandap from './src/Screens/Mandap_booking/ViewMandap'
+
+import Management from './src/Screens/Management/Index'
 import Pooja_booking from './src/Screens/Pooja_booking/Index'
 import Prashad_time from './src/Screens/Prashad_time/Index'
 import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
@@ -84,13 +98,27 @@ const App = () => {
             <Stack.Screen name="Temple_about" component={Temple_about} />
             <Stack.Screen name="SocialMedia" component={SocialMedia} />
             <Stack.Screen name="Temple_image_video" component={Temple_image_video} />
+            {/* Temple Bank */}
             <Stack.Screen name="BankDetails" component={BankDetails} />
             <Stack.Screen name="AddBank" component={AddBank} />
+            <Stack.Screen name="EditBank" component={EditBank} />
             <Stack.Screen name="ViewBank" component={ViewBank} />
-            <Stack.Screen name="Management" component={Management} />
+            {/* Temple Festival */}
             <Stack.Screen name="Temple_festival" component={Temple_festival} />
+            <Stack.Screen name="AddFestival" component={AddFestival} />
+            <Stack.Screen name="EditFestival" component={EditFestival} />
+            <Stack.Screen name="ViewFestival" component={ViewFestival} />
+            {/* Temple News */}
             <Stack.Screen name="Temple_news" component={Temple_news} />
+            <Stack.Screen name="AddNews" component={AddNews} />
+            <Stack.Screen name="EditNews" component={EditNews} />
+            {/* Temple Mandap */}
             <Stack.Screen name="Mandap_booking" component={Mandap_booking} />
+            <Stack.Screen name="AddMandap" component={AddMandap} />
+            <Stack.Screen name="EditMandap" component={EditMandap} />
+            <Stack.Screen name="ViewMandap" component={ViewMandap} />
+
+            <Stack.Screen name="Management" component={Management} />
             <Stack.Screen name="Pooja_booking" component={Pooja_booking} />
             <Stack.Screen name="Prashad_time" component={Prashad_time} />
             <Stack.Screen name="Yearly_rituals" component={Yearly_rituals} />

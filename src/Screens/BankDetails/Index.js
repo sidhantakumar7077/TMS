@@ -58,7 +58,7 @@ const Index = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditBank')} style={{ backgroundColor: '#fff' }}>
                                 <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#fff' }}>
@@ -77,7 +77,7 @@ const Index = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Patia</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditBank')} style={{ backgroundColor: '#fff' }}>
                                 <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#fff' }}>
@@ -96,7 +96,7 @@ const Index = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Niladri Vihar</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditBank')} style={{ backgroundColor: '#fff' }}>
                                 <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#fff' }}>
@@ -115,7 +115,7 @@ const Index = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditBank')} style={{ backgroundColor: '#fff' }}>
                                 <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#fff' }}>
@@ -134,7 +134,7 @@ const Index = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Jaydev Vihar</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditBank')} style={{ backgroundColor: '#fff' }}>
                                 <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                             </TouchableOpacity>
                             <TouchableOpacity style={{ backgroundColor: '#fff' }}>

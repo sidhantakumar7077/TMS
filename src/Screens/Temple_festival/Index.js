@@ -1,15 +1,13 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
-import { launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
-import DatePicker from 'react-native-date-picker'
-import moment from 'moment';
-import { useNavigation, useIsFocused } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const Index = (props) => {
 
@@ -17,48 +15,6 @@ const Index = (props) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const openModal = () => { setModalVisible(true) };
     const closeModal = () => { setModalVisible(false) };
-
-    const [festival_name, setFestival_name] = useState('');
-    const [fastival_date, setFastival_date] = useState(null);
-    const [dateOpen, setDateOpen] = useState(false);
-    const [festival_desc, setFestival_desc] = useState('');
-    const [isFocused, setIsFocused] = useState(null);
-
-    const [festivalImages, setFestivalImages] = useState([]);
-    const [festivalImageCount, setFestivalImageCount] = useState('Select Images');
-
-    // Handle image selection using react-native-image-picker
-    const selectTempleImages = async () => {
-        const options = {
-            title: 'Select Images',
-            selectionLimit: 0, // Allows multiple image selection
-            mediaType: 'photo',
-            includeBase64: false,
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
-
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else {
-                const selectedImages = response.assets;
-                setFestivalImages([...festivalImages, ...selectedImages]); // Add new images to the array
-                setFestivalImageCount(`Select ${festivalImages.length + selectedImages.length} Images`);
-            }
-        });
-    };
-
-    // Remove image by index
-    const removeImage = (indexToRemove) => {
-        const updatedImages = festivalImages.filter((_, index) => index !== indexToRemove);
-        setFestivalImages(updatedImages);
-        setFestivalImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
-    };
 
     return (
         <View style={styles.container}>
@@ -74,96 +30,60 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView style={{ flex: 1 }}>
-                <View style={styles.topBanner}>
-                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
-                </View>
-                <View style={styles.cardBox}>
-                    {/* Festival Name Input */}
-                    <Text style={[styles.label, (isFocused === 'festival_name' || festival_name !== '') && styles.focusedLabel]}>Festival Name</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'festival_name' || festival_name !== '') && styles.focusedInput]}
-                        value={festival_name}
-                        onChangeText={(text) => setFestival_name(text)}
-                        onFocus={() => setIsFocused('festival_name')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Fastival Date */}
-                    <Text style={[styles.label, (fastival_date !== null) && styles.focusedLabel]}>Festival Date</Text>
-                    <TouchableOpacity onPress={() => setDateOpen(true)} style={[styles.datePickerStyle, (fastival_date !== null) && { marginTop: 14 }]}>
-                        <Text style={{ color: '#000', width: '90%' }}>{fastival_date ? moment(fastival_date).format("DD/MM/YYYY") : null}</Text>
-                        <Fontisto name="date" size={fastival_date !== null ? 22 : 19} color={fastival_date !== null ? '#56ab2f' : "#161c19"} />
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
+                <View style={styles.addFestival}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('AddFestival')} style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
+                        <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center' }}>
+                            <FontAwesome6 name="plus" color={'#ffcb44'} size={22} />
+                            <Text style={{ color: '#ffcb44', fontSize: 16, fontWeight: '500', marginLeft: 10 }}> Add a new festival</Text>
+                        </View>
                     </TouchableOpacity>
-                    <View style={{ backgroundColor: fastival_date !== null ? '#56ab2f' : '#757473', width: '100%', height: fastival_date !== null ? 2 : 0.7, marginBottom: 30 }} />
-                    <View>
-                        <DatePicker
-                            modal
-                            mode="date"
-                            open={dateOpen}
-                            date={fastival_date || new Date()}
-                            onConfirm={(data) => {
-                                setDateOpen(false)
-                                setFastival_date(data)
-                            }}
-                            onCancel={() => {
-                                setDateOpen(false);
-                            }}
-                        />
+                </View>
+                <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 20 }}>
+                    <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 80, alignSelf: 'center', marginVertical: 10 }}></View>
+                    <Text style={{ color: '#7a7979', fontSize: 14, fontWeight: '500', letterSpacing: 2 }}>SAVED FESTIVAL</Text>
+                    <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 80, alignSelf: 'center', marginVertical: 10 }}></View>
+                </View>
+                <View style={{ flex: 1 }}>
+                    <View style={styles.festivalBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <MaterialIcons name="festival" color={'#000'} size={30} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>DURGA POOJA</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>2024-10-24</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>Durga Puja, also known as Durgotsava or Shaaradotsava,</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditFestival')} style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff', marginTop: 7 }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-
-                    {/* Festival Description Input */}
-                    <Text style={[styles.label, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedLabel]}>Festival Description</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedInput]}
-                        value={festival_desc}
-                        maxLength={10}
-                        onChangeText={(text) => setFestival_desc(text)}
-                        onFocus={() => setIsFocused('festival_desc')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Image Upload Section */}
-                    <View>
-                        <Text style={[styles.label, (festivalImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Festival Images</Text>
-                        <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
-                            <TextInput
-                                style={styles.filePickerText}
-                                editable={false}
-                                placeholder={festivalImageCount}
-                                placeholderTextColor={'#000'}
-                            />
-                            <View style={styles.chooseBtn}>
-                                <Text style={styles.chooseBtnText}>Choose Files</Text>
-                            </View>
-                        </TouchableOpacity>
-                        {/* Display selected images with remove (cross) icon */}
-                        <View style={styles.imagePreviewContainer}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                {festivalImages.length > 0 ? (
-                                    festivalImages.map((image, index) => (
-                                        <View key={index} style={styles.imageWrapper}>
-                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            {/* Cross icon to remove the image */}
-                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                                <Icon name="cancel" size={24} color="red" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))
-                                ) : null}
-                            </ScrollView>
+                    <View style={styles.festivalBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <MaterialIcons name="festival" color={'#000'} size={30} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>GANESH POOJA</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>2024-08-18</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>Ganesh Chaturthi, also known as Vinayaka Chaturthi or Vinayaka Chavithi or Vinayagar Chaturthi</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity onPress={() => props.navigation.navigate('EditFestival')} style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff', marginTop: 7 }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </View>
-                {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_news')}>
-                    <LinearGradient
-                        colors={['#c9170a', '#f0837f']}
-                        style={styles.submitButton}
-                    >
-                        <Text style={styles.submitText}>Submit</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
             </ScrollView>
         </View>
     )
@@ -175,19 +95,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f4f4f4',
-    },
-    topBanner: {
-        width: '93%',
-        alignSelf: 'center',
-        height: 150,
-        backgroundColor: 'red',
-        borderRadius: 10,
-        marginTop: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
     },
     headerPart: {
         width: '100%',
@@ -211,118 +118,33 @@ const styles = StyleSheet.create({
         marginBottom: 3,
         // marginLeft: 5,
     },
-    cardBox: {
-        width: '93%',
-        alignSelf: 'center',
+    addFestival: {
         backgroundColor: '#fff',
-        padding: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-        marginVertical: 10,
-        borderRadius: 10
-    },
-    label: {
-        color: '#757473',
-        fontSize: 16,
-    },
-    focusedLabel: {
-        color: '#56ab2f',
-        fontSize: 16,
-        fontWeight: '500'
-    },
-    input: {
-        height: 25,
-        borderBottomWidth: 0.7,
-        borderBottomColor: '#757473',
-        marginBottom: 30,
-        color: '#000',
-    },
-    focusedInput: {
-        height: 50,
-        borderBottomColor: '#56ab2f',
-        borderBottomWidth: 2
-    },
-    submitButton: {
-        width: '90%',
+        marginTop: 15,
+        width: '95%',
         alignSelf: 'center',
-        borderRadius: 12,
-        paddingVertical: 15,
-        alignItems: 'center',
+        padding: 10,
+        borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        elevation: 3,
-        marginVertical: 10,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 5,
     },
-    submitText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        letterSpacing: 1,  // Spacing for the button text
-    },
-    subHeaderText: {
-        fontSize: 18,
-        marginVertical: 10,
-        fontWeight: 'bold',
-        color: '#333',
-    },
-    filePicker: {
-        borderColor: '#ddd',
-        borderWidth: 1,
+    festivalBox: {
+        width: '95%',
+        alignSelf: 'center',
+        padding: 12,
+        backgroundColor: '#fff',
+        marginTop: 10,
         borderRadius: 10,
-        paddingLeft: 15,
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        justifyContent: 'space-between',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 5,
     },
-    filePickerText: {
-        width: '70%',
-        height: 45,
-        lineHeight: 45,
-        color: '#000',
-    },
-    chooseBtn: {
-        backgroundColor: '#bbb',
-        width: '30%',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 45,
-        borderTopRightRadius: 10,
-        borderBottomRightRadius: 10,
-    },
-    chooseBtnText: {
-        color: '#fff',
-        fontWeight: '500',
-    },
-    imagePreviewContainer: {
-        flexDirection: 'row',
-        // flexWrap: 'wrap',
-        justifyContent: 'center',
-    },
-    imageWrapper: {
-        position: 'relative',
-        margin: 5,
-    },
-    imagePreview: {
-        width: 100,
-        height: 100,
-        borderRadius: 10,
-    },
-    removeIcon: {
-        position: 'absolute',
-        top: -10,
-        right: -10,
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 2,
-    },
-    datePickerStyle: {
-        width: '100%',
-        marginBottom: 12,
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-    }
 })
