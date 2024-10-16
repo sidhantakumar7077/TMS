@@ -1,14 +1,15 @@
-import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, TouchableHighlight } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import Fontisto from 'react-native-vector-icons/Fontisto';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const Index = (props) => {
 
@@ -17,20 +18,13 @@ const Index = (props) => {
     const openModal = () => { setModalVisible(true) };
     const closeModal = () => { setModalVisible(false) };
 
-    const [bank_name, setBank_name] = useState('');
-    const [ifsc_code, setIfsc_code] = useState('');
-    const [account_number, setAccount_number] = useState('');
-    const [upi_id, setUpi_id] = useState('');
-    const [holder_name, setHolder_name] = useState('');
-    const [isFocused, setIsFocused] = useState(null);
-
     return (
         <View style={styles.container}>
             <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
             <View style={styles.headerPart}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Feather name="chevron-left" color={'#555454'} size={30} />
-                    <Text style={styles.headerText}>Temple Bank Details</Text>
+                    <Text style={styles.headerText}>Temple Bank</Text>
                 </TouchableOpacity>
                 <View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                     <TouchableOpacity onPress={openModal} style={{ marginLeft: 8 }}>
@@ -38,78 +32,169 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView style={{ flex: 1 }}>
-                <View style={styles.topBanner}>
-                    <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
+            <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
+                <View style={styles.addBank}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('AddBank')} style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
+                        <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center' }}>
+                            <FontAwesome6 name="plus" color={'#ffcb44'} size={22} />
+                            <Text style={{ color: '#ffcb44', fontSize: 16, fontWeight: '500', marginLeft: 10 }}> Add a new bank</Text>
+                        </View>
+                    </TouchableOpacity>
                 </View>
-
-                <View style={styles.cardBox}>
-                    {/* <View style={{width: '100%', backgroundColor: '#cfd0d1', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, marginBottom: 10}}>
-                    <Text style={{ color: '#000', fontWeight: '700', fontSize: 18 }}>Bank Details</Text>
-                </View> */}
-                    {/* Bank Name Input */}
-                    <Text style={[styles.label, (isFocused === 'bank_name' || bank_name !== '') && styles.focusedLabel]}>Bank Name</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'bank_name' || bank_name !== '') && styles.focusedInput]}
-                        value={bank_name}
-                        onChangeText={(text) => setBank_name(text)}
-                        onFocus={() => setIsFocused('bank_name')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* IFSC Code Input */}
-                    <Text style={[styles.label, (isFocused === 'ifsc_code' || ifsc_code !== '') && styles.focusedLabel]}>IFSC Code</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'ifsc_code' || ifsc_code !== '') && styles.focusedInput]}
-                        value={ifsc_code}
-                        onChangeText={(text) => setIfsc_code(text)}
-                        onFocus={() => setIsFocused('ifsc_code')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Account Number Input */}
-                    <Text style={[styles.label, (isFocused === 'account_number' || account_number !== '') && styles.focusedLabel]}>Account Number</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'account_number' || account_number !== '') && styles.focusedInput]}
-                        value={account_number}
-                        maxLength={10}
-                        onChangeText={(text) => setAccount_number(text)}
-                        onFocus={() => setIsFocused('account_number')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* UPI Id Input */}
-                    <Text style={[styles.label, (isFocused === 'upi_id' || upi_id !== '') && styles.focusedLabel]}>UPI Id</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'upi_id' || upi_id !== '') && styles.focusedInput]}
-                        value={upi_id}
-                        onChangeText={(text) => setUpi_id(text)}
-                        onFocus={() => setIsFocused('upi_id')}
-                        onBlur={() => setIsFocused(null)}
-                    />
-
-                    {/* Account Holder Name Input */}
-                    <Text style={[styles.label, (isFocused === 'holder_name' || holder_name !== '') && styles.focusedLabel]}>Account Holder Name</Text>
-                    <TextInput
-                        style={[styles.input, (isFocused === 'holder_name' || holder_name !== '') && styles.focusedInput]}
-                        value={holder_name}
-                        onChangeText={(text) => setHolder_name(text)}
-                        onFocus={() => setIsFocused('holder_name')}
-                        onBlur={() => setIsFocused(null)}
-                    />
+                <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 20 }}>
+                    <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 100, alignSelf: 'center', marginVertical: 10 }}></View>
+                    <Text style={{ color: '#7a7979', fontSize: 14, fontWeight: '500', letterSpacing: 2 }}>SAVED BANK</Text>
+                    <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 100, alignSelf: 'center', marginVertical: 10 }}></View>
                 </View>
+                <View style={{ flex: 1 }}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ViewBank')} style={styles.bankBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <FontAwesome name="bank" color={'#000'} size={24} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>AXIS Bank</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>87655******</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ViewBank')} style={styles.bankBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <FontAwesome name="bank" color={'#000'} size={24} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>SBI Bank</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>68788******</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Patia</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ViewBank')} style={styles.bankBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <FontAwesome name="bank" color={'#000'} size={24} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>ECO Bank</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>98789******</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Niladri Vihar</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ViewBank')} style={styles.bankBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <FontAwesome name="bank" color={'#000'} size={24} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>HDFC Bank</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>46657******</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('ViewBank')} style={styles.bankBox}>
+                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                            <FontAwesome name="bank" color={'#000'} size={24} />
+                        </View>
+                        <View style={{ width: '5%' }}></View>
+                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>INDIAN Bank</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>588996******</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Jaydev Vihar</Text>
+                        </View>
+                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ backgroundColor: '#fff' }}>
+                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                    {/* <FlatList
+                        showsHorizontalScrollIndicator={false}
+                        data={allAddresses.reverse()}
+                        scrollEnabled={false}
+                        keyExtractor={(key) => {
+                            return key.id
+                        }}
+                        renderItem={(address) => {
+                            return (
+                                <View style={styles.addressBox}>
+                                    <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center' }}>
+                                        {address.item.address_type === "Home" && <AntDesign name="home" color={'#555454'} size={22} />}
+                                        {address.item.address_type === "Work" && <MaterialIcons name="work-outline" color={'#555454'} size={22} />}
+                                        {address.item.address_type === "Other" && <Fontisto name="world-o" color={'#555454'} size={22} />}
 
-                {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('Management')}>
-                    <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
-                        <Text style={styles.submitText}>Submit</Text>
-                    </LinearGradient>
-                </TouchableOpacity>
+                                        {address.item.address_type === "Home" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Home</Text>}
+                                        {address.item.address_type === "Work" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Work</Text>}
+                                        {address.item.address_type === "Other" && <Text style={{ fontSize: 13, fontWeight: '400', color: '#616161' }}>Other</Text>}
+                                    </View>
+                                    <View style={{ width: '3%' }}></View>
+                                    <View style={{ width: '72%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address.item.area},  {address.item.city}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#545353', letterSpacing: 0.6 }}>{address.item.state},  {address.item.pincode}</Text>
+                                        {address.item.default === 1 ?
+                                            <View style={{ marginTop: 4, flexDirection: 'row', alignItems: 'center' }}>
+                                                <FontAwesome name='check-circle' color='#5286f7' size={18} />
+                                                <Text style={{ fontSize: 15, fontWeight: '500', color: '#5286f7', letterSpacing: 0.6, marginLeft: 5 }}>Default Address</Text>
+                                            </View>
+                                            :
+                                            <TouchableOpacity onPress={() => handleDefaultAddress(address.item.id)} style={{ marginTop: 4 }}>
+                                                <Text style={{ fontSize: 15, fontWeight: '500', color: '#5286f7', letterSpacing: 0.6 }}>Set as default</Text>
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+                                    <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                                        <TouchableOpacity onPress={() => getAddressById(address.item)} style={{ backgroundColor: '#fff' }}>
+                                            <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                                        </TouchableOpacity>
+                                        {address.item.default === 0 &&
+                                            <TouchableOpacity onPress={() => confirmDelete(address.item.id)} style={{ backgroundColor: '#fff' }}>
+                                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+                                </View>
+                            )
+                        }}
+                    /> */}
+                </View>
             </ScrollView>
-
-            {/* <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
+            <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
-                    <View style={{ padding: 0, width: '20%' }}>
+                    <View style={{ padding: 0, width: '25%' }}>
                         <View activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
                             <View style={{ alignItems: 'center' }}>
                                 <Octicons name="home" color={'#dc3545'} size={21} />
@@ -117,30 +202,23 @@ const Index = (props) => {
                             </View>
                         </View>
                     </View>
-                    <View style={{ padding: 0, width: '19%' }}>
+                    <View style={{ padding: 0, width: '25%' }}>
                         <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
                             <View style={{ alignItems: 'center' }}>
-                                <AntDesign name="filetext1" color={'#000'} size={22} />
-                                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Request</Text>
+                                <MaterialCommunityIcons name="finance" color={'#000'} size={23} />
+                                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Finance</Text>
                             </View>
                         </TouchableHighlight>
                     </View>
-                    <View style={{ padding: 0, width: '23%' }}>
-                        <View style={{ backgroundColor: '#fff', padding: 8, height: 90, flexDirection: 'column', alignItems: 'center', bottom: 25, borderRadius: 100 }}>
-                            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#dc3545', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 60 }}>
-                                <MaterialCommunityIcons style={{}} name="podcast" color={'#fff'} size={40} />
-                            </TouchableHighlight>
-                        </View>
-                    </View>
-                    <View style={{ padding: 0, width: '19%' }}>
+                    <View style={{ padding: 0, width: '25%' }}>
                         <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
                             <View style={{ alignItems: 'center' }}>
-                                <MaterialIcons name="live-tv" color={'#000'} size={22} />
+                                <MaterialIcons name="work-history" color={'#000'} size={22} />
                                 <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Booking</Text>
                             </View>
                         </TouchableHighlight>
                     </View>
-                    <View style={{ padding: 0, width: '19%' }}>
+                    <View style={{ padding: 0, width: '25%' }}>
                         <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
                             <View style={{ alignItems: 'center', marginTop: 3 }}>
                                 <Fontisto name="date" color={'#000'} size={20} />
@@ -149,7 +227,7 @@ const Index = (props) => {
                         </TouchableHighlight>
                     </View>
                 </View>
-            </View> */}
+            </View>
         </View>
     )
 }
@@ -183,69 +261,32 @@ const styles = StyleSheet.create({
         marginBottom: 3,
         // marginLeft: 5,
     },
-    topBanner: {
-        width: '93%',
-        alignSelf: 'center',
-        height: 150,
-        // backgroundColor: 'red',
-        borderRadius: 10,
-        marginTop: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-    },
-    cardBox: {
-        width: '93%',
-        alignSelf: 'center',
+    addBank: {
         backgroundColor: '#fff',
-        padding: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 3,
-        marginVertical: 10,
-        borderRadius: 10
-    },
-    label: {
-        color: '#757473',
-        fontSize: 16,
-    },
-    focusedLabel: {
-        color: '#56ab2f',
-        fontSize: 16,
-        fontWeight: '500'
-    },
-    input: {
-        height: 25,
-        borderBottomWidth: 0.7,
-        borderBottomColor: '#757473',
-        marginBottom: 30,
-        color: '#000',
-    },
-    focusedInput: {
-        height: 50,
-        borderBottomColor: '#56ab2f',
-        borderBottomWidth: 2
-    },
-    submitButton: {
-        width: '90%',
+        marginTop: 15,
+        width: '95%',
         alignSelf: 'center',
-        borderRadius: 12,
-        paddingVertical: 15,
-        alignItems: 'center',
+        padding: 10,
+        borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        elevation: 3,
-        marginVertical: 10,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 5,
     },
-    submitText: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        letterSpacing: 1,  // Spacing for the button text
+    bankBox: {
+        width: '95%',
+        alignSelf: 'center',
+        padding: 12,
+        backgroundColor: '#fff',
+        marginTop: 10,
+        borderRadius: 10,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 13,
+        elevation: 5,
     },
 })

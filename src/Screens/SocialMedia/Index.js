@@ -1,8 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
 import React, { useState } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import Video from 'react-native-video';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
@@ -21,87 +19,6 @@ const Index = (props) => {
     const [facebookURL, setFacebookURL] = useState('');
     const [twitterURL, setTwitterURL] = useState('');
     const [isFocused, setIsFocused] = useState(null);
-
-    const [templeImages, setTempleImages] = useState([]); // Array to store selected images
-    const [templeImageCount, setTempleImageCount] = useState('Select Images');
-    const [templeVideos, setTempleVideos] = useState([]); // Array to store selected videos
-    const [templeVideoCount, setTempleVideoCount] = useState('Select Videos');
-    const [pausedVideos, setPausedVideos] = useState([]); // Array to track paused videos
-
-    // Handle image selection using react-native-image-picker
-    const selectTempleImages = async () => {
-        const options = {
-            title: 'Select Images',
-            selectionLimit: 0, // Allows multiple image selection
-            mediaType: 'photo',
-            includeBase64: false,
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
-
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else {
-                const selectedImages = response.assets;
-                setTempleImages([...templeImages, ...selectedImages]); // Add new images to the array
-                setTempleImageCount(`Uploaded ${templeImages.length + selectedImages.length} Images`);
-            }
-        });
-    };
-
-    // Handle video selection using react-native-image-picker
-    const selectTempleVideos = async () => {
-        const options = {
-            title: 'Select Videos',
-            selectionLimit: 0, // Allows multiple video selection
-            mediaType: 'video', // Restrict to video selection
-            includeBase64: false,
-            storageOptions: {
-                skipBackup: true,
-                path: 'videos',
-            },
-        };
-
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled video picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else {
-                const selectedVideos = response.assets;
-                setTempleVideos([...templeVideos, ...selectedVideos]); // Add new videos to the array
-                setTempleVideoCount(`Uploaded ${templeVideos.length + selectedVideos.length} Videos`);
-                setPausedVideos([...pausedVideos, ...selectedVideos.map(() => true)]); // Initialize paused state for each video
-            }
-        });
-    };
-
-    // Toggle play/pause state for a video by index
-    const togglePlayPause = (index) => {
-        const updatedPausedVideos = pausedVideos.map((paused, i) => (i === index ? !paused : paused));
-        setPausedVideos(updatedPausedVideos);
-    };
-
-    // Remove image by index
-    const removeImage = (indexToRemove) => {
-        const updatedImages = templeImages.filter((_, index) => index !== indexToRemove);
-        setTempleImages(updatedImages);
-        setTempleImageCount(updatedImages.length > 0 ? `Uploaded ${updatedImages.length} Images` : 'Select Images');
-    };
-
-    // Remove video by index
-    const removeVideo = (indexToRemove) => {
-        const updatedVideos = templeVideos.filter((_, index) => index !== indexToRemove);
-        const updatedPausedVideos = pausedVideos.filter((_, index) => index !== indexToRemove);
-        setTempleVideos(updatedVideos);
-        setPausedVideos(updatedPausedVideos);
-        setTempleVideoCount(updatedVideos.length > 0 ? `Uploaded ${updatedVideos.length} Videos` : 'Select Videos');
-    };
 
     return (
         <View style={styles.container}>
@@ -122,80 +39,6 @@ const Index = (props) => {
                     <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
                 </View>
                 <View style={{ width: '100%', alignSelf: 'center', flex: 1, marginTop: 10 }}>
-                    {/* Image Upload Section */}
-                    <View style={styles.cardBox}>
-                        <Text style={styles.subHeaderText}>Upload Temple Images</Text>
-                        <TouchableOpacity style={styles.filePicker} onPress={selectTempleImages}>
-                            <TextInput
-                                style={styles.filePickerText}
-                                editable={false}
-                                placeholder={templeImageCount}
-                                placeholderTextColor={'#000'}
-                            />
-                            <View style={styles.chooseBtn}>
-                                <Text style={styles.chooseBtnText}>Choose Files</Text>
-                            </View>
-                        </TouchableOpacity>
-                        {/* Display selected images with remove (cross) icon */}
-                        <View style={styles.imagePreviewContainer}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                {templeImages.length > 0 ? (
-                                    templeImages.map((image, index) => (
-                                        <View key={index} style={styles.imageWrapper}>
-                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            {/* Cross icon to remove the image */}
-                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                                <Icon name="cancel" size={24} color="red" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))
-                                ) : null}
-                            </ScrollView>
-                        </View>
-                    </View>
-
-                    {/* Video Upload Section */}
-                    <View style={styles.cardBox}>
-                        <Text style={styles.subHeaderText}>Upload Temple Videos</Text>
-                        <TouchableOpacity style={styles.filePicker} onPress={selectTempleVideos}>
-                            <TextInput
-                                style={styles.filePickerText}
-                                editable={false}
-                                placeholder={templeVideoCount}
-                                placeholderTextColor={'#000'}
-                            />
-                            <View style={styles.chooseBtn}>
-                                <Text style={styles.chooseBtnText}>Choose Files</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                        {/* Display selected videos with custom play/pause control */}
-                        <View style={styles.videoPreviewContainer}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                {templeVideos.length > 0 ? (
-                                    templeVideos.map((video, index) => (
-                                        <View key={index} style={styles.videoWrapper}>
-                                            <Video
-                                                source={{ uri: video.uri }}
-                                                style={styles.videoPreview}
-                                                paused={pausedVideos[index]} // Control play/pause based on state
-                                                resizeMode="cover"
-                                            />
-                                            {/* Play/Pause button */}
-                                            <TouchableOpacity style={styles.playPauseBtn} onPress={() => togglePlayPause(index)}>
-                                                <Icon name={pausedVideos[index] ? "play-arrow" : "pause"} size={24} color="white" />
-                                            </TouchableOpacity>
-                                            {/* Cross icon to remove the video */}
-                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeVideo(index)}>
-                                                <Icon name="cancel" size={24} color="red" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))
-                                ) : null}
-                            </ScrollView>
-                        </View>
-                    </View>
-
                     <View style={styles.cardBox}>
                         <Text style={styles.subHeaderText}>Social Media</Text>
                         <Text style={[styles.label, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedLabel]}>Youtube URL</Text>
@@ -235,10 +78,9 @@ const Index = (props) => {
                             onBlur={() => setIsFocused(null)}
                         />
                     </View>
-
                 </View>
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('BankDetails')}>
+                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_image_video')}>
                     <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                         <Text style={styles.submitText}>Submit</Text>
                     </LinearGradient>

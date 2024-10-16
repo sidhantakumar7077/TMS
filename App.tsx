@@ -19,7 +19,10 @@ import OtpVerify from './src/Screens/Auth/OtpVerify';
 import Dashboard from './src/Screens/Dashboard/Index'
 import Temple_about from './src/Screens/Temple_about/Index'
 import SocialMedia from './src/Screens/SocialMedia/Index'
+import Temple_image_video from './src/Screens/Temple_image_video/Index'
 import BankDetails from './src/Screens/BankDetails/Index'
+import AddBank from './src/Screens/BankDetails/AddBank'
+import ViewBank from './src/Screens/BankDetails/ViewBank'
 import Management from './src/Screens/Management/Index'
 import Temple_festival from './src/Screens/Temple_festival/Index'
 import Temple_news from './src/Screens/Temple_news/Index'
@@ -80,7 +83,10 @@ const App = () => {
             <Stack.Screen name="Dashboard" component={Dashboard} />
             <Stack.Screen name="Temple_about" component={Temple_about} />
             <Stack.Screen name="SocialMedia" component={SocialMedia} />
+            <Stack.Screen name="Temple_image_video" component={Temple_image_video} />
             <Stack.Screen name="BankDetails" component={BankDetails} />
+            <Stack.Screen name="AddBank" component={AddBank} />
+            <Stack.Screen name="ViewBank" component={ViewBank} />
             <Stack.Screen name="Management" component={Management} />
             <Stack.Screen name="Temple_festival" component={Temple_festival} />
             <Stack.Screen name="Temple_news" component={Temple_news} />

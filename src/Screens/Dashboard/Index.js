@@ -150,6 +150,7 @@ const DashboardTab = () => {
                     renderItem={renderServiceItem}
                     keyExtractor={item => item.id}
                     numColumns={2}
+                    scrollEnabled={false}
                     contentContainerStyle={styles.serviceListContainer}
                 />
             </View>
