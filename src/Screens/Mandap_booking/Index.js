@@ -55,7 +55,7 @@ const Index = (props) => {
                         <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
                             <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>AXIS Bank</Text>
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>87655******</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali1</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
                             <TouchableOpacity onPress={() => props.navigation.navigate('EditMandap')} style={{ backgroundColor: '#fff' }}>
