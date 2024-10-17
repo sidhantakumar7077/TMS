@@ -39,14 +39,20 @@ import Mandap_booking from './src/Screens/Mandap_booking/Index'
 import AddMandap from './src/Screens/Mandap_booking/AddMandap'
 import EditMandap from './src/Screens/Mandap_booking/EditMandap'
 import ViewMandap from './src/Screens/Mandap_booking/ViewMandap'
+// Temple Pooja
+import Pooja_booking from './src/Screens/Pooja_booking/Index'
+import AddPooja from './src/Screens/Pooja_booking/AddPooja'
+import EditPooja from './src/Screens/Pooja_booking/EditPooja'
+// Banner
+import Banner from './src/Screens/Banner/Index'
+import AddBanner from './src/Screens/Banner/AddBanner'
+import EditBanner from './src/Screens/Banner/EditBanner'
 
 import Management from './src/Screens/Management/Index'
-import Pooja_booking from './src/Screens/Pooja_booking/Index'
 import Prashad_time from './src/Screens/Prashad_time/Index'
 import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
 import Daily_rituals from './src/Screens/Daily_rituals/Index'
 import Darshan_time from './src/Screens/Darshan_time/Index'
-import Banner from './src/Screens/Banner/Index'
 import Donation from './src/Screens/Donation/Index'
 import Temple_inventory from './src/Screens/Temple_inventory/Index'
 import Temple_insideTemples from './src/Screens/Temple_insideTemples/Index'
@@ -56,7 +62,7 @@ import Temple_Finance from './src/Screens/Temple_Finance/Index'
 
 const Stack = createNativeStackNavigator()
 
-export const base_url = "http://temple.mandirparikrama.com/"
+export const base_url = "http://temple.mandirparikrama.com"
 
 const App = () => {
 
@@ -117,14 +123,20 @@ const App = () => {
             <Stack.Screen name="AddMandap" component={AddMandap} />
             <Stack.Screen name="EditMandap" component={EditMandap} />
             <Stack.Screen name="ViewMandap" component={ViewMandap} />
+            {/* Temple Pooja */}
+            <Stack.Screen name="Pooja_booking" component={Pooja_booking} />
+            <Stack.Screen name="AddPooja" component={AddPooja} />
+            <Stack.Screen name="EditPooja" component={EditPooja} />
+            {/* Banner */}
+            <Stack.Screen name="Banner" component={Banner} />
+            <Stack.Screen name="AddBanner" component={AddBanner} />
+            <Stack.Screen name="EditBanner" component={EditBanner} />
 
             <Stack.Screen name="Management" component={Management} />
-            <Stack.Screen name="Pooja_booking" component={Pooja_booking} />
             <Stack.Screen name="Prashad_time" component={Prashad_time} />
             <Stack.Screen name="Yearly_rituals" component={Yearly_rituals} />
             <Stack.Screen name="Daily_rituals" component={Daily_rituals} />
             <Stack.Screen name="Darshan_time" component={Darshan_time} />
-            <Stack.Screen name="Banner" component={Banner} />
             <Stack.Screen name="Donation" component={Donation} />
             <Stack.Screen name="Temple_inventory" component={Temple_inventory} />
             <Stack.Screen name="Temple_insideTemples" component={Temple_insideTemples} />

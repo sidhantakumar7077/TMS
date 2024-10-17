@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
-import React, { useState } from 'react';
-import { launchImageLibrary } from 'react-native-image-picker';
+import React, { useState, useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation, useIsFocused } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const Index = (props) => {
 
@@ -19,6 +21,65 @@ const Index = (props) => {
     const [facebookURL, setFacebookURL] = useState('');
     const [twitterURL, setTwitterURL] = useState('');
     const [isFocused, setIsFocused] = useState(null);
+
+    const showErrorToast = (message) => {
+        Toast.show(message, Toast.LONG);
+    };
+
+    const handleSubmit = async () => {
+        const data = {
+            temple_yt_url: utubeURL,
+            temple_ig_url: instaURL,
+            temple_fb_url: facebookURL,
+            temple_x_url: twitterURL,
+        };
+
+        try {
+            const response = await axios.post(`${base_url}/api/social-media/update`, data, {
+                headers: {
+                    Authorization: `Bearer 1|gOOSULybwMTV74JdEHRbPz7aShtfHMDO6EBU9CBn`,
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (response.status === 200) {
+                // console.log('Data posted successfully:', response.data);
+                showErrorToast('Data posted successfully');
+            } else {
+                // console.error('Error posting data: Unexpected response status', response.status);
+                showErrorToast('Error posting data: Unexpected response status', response.status);
+            }
+        } catch (error) {
+            // console.error('Error posting data:', error);
+            showErrorToast('Error posting data:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchSocialMediaLinks = async () => {
+            try {
+                const response = await axios.get(`${base_url}/api/social-media`, {
+                    headers: {
+                        Authorization: `Bearer 1|gOOSULybwMTV74JdEHRbPz7aShtfHMDO6EBU9CBn`
+                    }
+                });
+                // console.log("object", response.data.data);
+                // return;
+                if (response.status === 200) {
+                    setUtubeURL(response.data.data.temple_yt_url);
+                    setInstaURL(response.data.data.temple_ig_url);
+                    setFacebookURL(response.data.data.temple_fb_url);
+                    setTwitterURL(response.data.data.temple_x_url);
+                } else {
+                    console.error('Error fetching social media links: Unexpected response status', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching social media links:', error);
+            }
+        };
+
+        fetchSocialMediaLinks();
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -34,7 +95,7 @@ const Index = (props) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <ScrollView style={{flex: 1}}>
+            <ScrollView style={{ flex: 1 }}>
                 <View style={styles.topBanner}>
                     <Image style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10 }} source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }} />
                 </View>
@@ -63,7 +124,6 @@ const Index = (props) => {
                         <TextInput
                             style={[styles.input, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedInput]}
                             value={facebookURL}
-                            maxLength={10}
                             onChangeText={(text) => setFacebookURL(text)}
                             onFocus={() => setIsFocused('facebookURL')}
                             onBlur={() => setIsFocused(null)}
@@ -80,7 +140,7 @@ const Index = (props) => {
                     </View>
                 </View>
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('Temple_image_video')}>
+                <TouchableOpacity onPress={handleSubmit}>
                     <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                         <Text style={styles.submitText}>Submit</Text>
                     </LinearGradient>

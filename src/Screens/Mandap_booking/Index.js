@@ -5,11 +5,9 @@ import { useNavigation } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
 
 const Index = (props) => {
 
@@ -49,13 +47,13 @@ const Index = (props) => {
                 <View style={{ flex: 1 }}>
                     <TouchableOpacity onPress={() => props.navigation.navigate('ViewMandap')} style={styles.mandapBox}>
                         <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
-                            <FontAwesome name="bank" color={'#000'} size={24} />
+                            <MaterialIcons name="museum" color={'#000'} size={30} />
                         </View>
                         <View style={{ width: '5%' }}></View>
                         <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>AXIS Bank</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>87655******</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>Mandap Name</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Event Name</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>₹1200</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
                             <TouchableOpacity onPress={() => props.navigation.navigate('EditMandap')} style={{ backgroundColor: '#fff' }}>
