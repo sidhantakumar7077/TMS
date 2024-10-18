@@ -1,13 +1,16 @@
-import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, FlatList, TouchableHighlight } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const Index = (props) => {
 
@@ -15,6 +18,61 @@ const Index = (props) => {
     const [isModalVisible, setModalVisible] = useState(false);
     const openModal = () => { setModalVisible(true) };
     const closeModal = () => { setModalVisible(false) };
+    const isFocused = useIsFocused();
+    const [festivalList, setFestivalList] = useState([]);
+
+    const fetchFestivalList = async () => {
+        try {
+            const response = await axios.get(`${base_url}/api/manage-festival`, {
+                headers: {
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                }
+            });
+            if (response.status === 200) {
+                // console.log("object", response.data);
+                setFestivalList(response.data.festivals);
+            } else {
+                Toast.show('Failed to fetch festival list', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to fetch festival list', Toast.LONG);
+        }
+    }
+
+    const [isFestivalDeleteModal, setIsFestivalDeleteModal] = useState(false);
+    const openFestivalDeleteModal = () => { setIsFestivalDeleteModal(true) };
+    const closeFestivalDeleteModal = () => { setIsFestivalDeleteModal(false) };
+    const [selectedFestivalId, setSelectedFestivalId] = useState(null);
+
+    const showFestivalDeleteModal = (id) => {
+        setSelectedFestivalId(id);
+        openFestivalDeleteModal();
+    }
+
+    const deleteFestival = async (id) => {
+        try {
+            const response = await axios.delete(`${base_url}/api/delete-festival/${id}`, {
+                headers: {
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                }
+            });
+            if (response.status === 200) {
+                Toast.show("Festival deleted successfully", Toast.LONG);
+                closeFestivalDeleteModal();
+                fetchFestivalList();
+            } else {
+                Toast.show('Failed to delete festival', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to delete festival', Toast.LONG);
+        }
+    };
+
+    useEffect(() => {
+        if (isFocused) {
+            fetchFestivalList();
+        }
+    }, [isFocused]);
 
     return (
         <View style={styles.container}>
@@ -45,46 +103,102 @@ const Index = (props) => {
                     <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 80, alignSelf: 'center', marginVertical: 10 }}></View>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <View style={styles.festivalBox}>
-                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
-                            <MaterialIcons name="festival" color={'#000'} size={30} />
-                        </View>
-                        <View style={{ width: '5%' }}></View>
-                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>DURGA POOJA</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>2024-10-24</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>Durga Puja, also known as Durgotsava or Shaaradotsava,</Text>
-                        </View>
-                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('EditFestival')} style={{ backgroundColor: '#fff' }}>
-                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: '#fff', marginTop: 7 }}>
-                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
-                            </TouchableOpacity>
+                    {festivalList?.length > 0 ?
+                        <FlatList
+                            data={festivalList}
+                            keyExtractor={(item, index) => index.toString()}
+                            scrollEnabled={false}
+                            renderItem={({ item }) => (
+                                <View style={styles.festivalBox}>
+                                    <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                                        <MaterialIcons name="festival" color={'#000'} size={30} />
+                                    </View>
+                                    <View style={{ width: '5%' }}></View>
+                                    <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item.festival_name}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>{item.festival_date}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>{item.festival_descp}</Text>
+                                    </View>
+                                    <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                                        <TouchableOpacity onPress={() => props.navigation.navigate('EditFestival', item)} style={{ backgroundColor: '#fff' }}>
+                                            <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => showFestivalDeleteModal(item.id)} style={{ backgroundColor: '#fff', marginTop: 7 }}>
+                                            <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        />
+                        : <Text style={{ textAlign: 'center', top: 200, color: '#000', fontSize: 18 }}>No festival available!</Text>
+                    }
+                </View>
+            </ScrollView>
+            <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
+                    <View style={{ padding: 0, width: '25%' }}>
+                        <View activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <Octicons name="home" color={'#dc3545'} size={21} />
+                                <Text style={{ color: '#dc3545', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
+                            </View>
                         </View>
                     </View>
-                    <View style={styles.festivalBox}>
-                        <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
-                            <MaterialIcons name="festival" color={'#000'} size={30} />
+                    <View style={{ padding: 0, width: '25%' }}>
+                        <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <MaterialCommunityIcons name="finance" color={'#000'} size={23} />
+                                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Finance</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <View style={{ padding: 0, width: '25%' }}>
+                        <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <MaterialIcons name="work-history" color={'#000'} size={22} />
+                                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Booking</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                    <View style={{ padding: 0, width: '25%' }}>
+                        <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+                            <View style={{ alignItems: 'center', marginTop: 3 }}>
+                                <Fontisto name="date" color={'#000'} size={20} />
+                                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Panji</Text>
+                            </View>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            </View>
+
+            {/* Start Delete Area Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={isFestivalDeleteModal}
+                onRequestClose={closeFestivalDeleteModal}
+            >
+                <View style={styles.deleteModalOverlay}>
+                    <View style={styles.deleteModalContainer}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <MaterialIcons name="report-gmailerrorred" size={100} color="red" />
+                                <Text style={{ color: '#000', fontSize: 23, fontWeight: 'bold', textAlign: 'center', letterSpacing: 0.3 }}>Are You Sure To Delete This Festival?</Text>
+                                <Text style={{ color: 'gray', fontSize: 17, fontWeight: '500', marginTop: 4 }}>You won't be able to revert this!</Text>
+                            </View>
                         </View>
-                        <View style={{ width: '5%' }}></View>
-                        <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>GANESH POOJA</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>2024-08-18</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '400', color: '#666565', letterSpacing: 0.6 }}>Ganesh Chaturthi, also known as Vinayaka Chaturthi or Vinayaka Chavithi or Vinayagar Chaturthi</Text>
-                        </View>
-                        <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                            <TouchableOpacity onPress={() => props.navigation.navigate('EditFestival')} style={{ backgroundColor: '#fff' }}>
-                                <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                        <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', marginTop: 10 }}>
+                            <TouchableOpacity onPress={closeFestivalDeleteModal} style={styles.cancelDeleteBtn}>
+                                <Text style={styles.btnText}>Cancel</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ backgroundColor: '#fff', marginTop: 7 }}>
-                                <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                            <TouchableOpacity onPress={() => deleteFestival(selectedFestivalId)} style={styles.confirmDeleteBtn}>
+                                <Text style={styles.btnText}>Yes, delete it!</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
-            </ScrollView>
+            </Modal>
+            {/* End Delete Area Modal */}
         </View>
     )
 }
@@ -146,5 +260,39 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.8,
         shadowRadius: 13,
         elevation: 5,
+    },
+    deleteModalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    deleteModalContainer: {
+        width: '90%',
+        backgroundColor: '#fff',
+        borderRadius: 15, // Slightly more rounded corners
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 }, // More pronounced shadow
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+        elevation: 10,
+        padding: 20,
+    },
+    cancelDeleteBtn: {
+        backgroundColor: 'red',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 7
+    },
+    btnText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600'
+    },
+    confirmDeleteBtn: {
+        backgroundColor: 'green',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 7
     },
 })

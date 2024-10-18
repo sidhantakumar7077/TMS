@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const EditBank = (props) => {
 
@@ -14,6 +17,54 @@ const EditBank = (props) => {
     const [holder_name, setHolder_name] = useState('');
     const [branch_name, setBranch_name] = useState('');
     const [isFocused, setIsFocused] = useState(null);
+
+    useEffect(() => {
+        // console.log("object", props.route.params);
+        setBank_name(props.route.params.bank_name);
+        setBranch_name(props.route.params.branch_name);
+        setIfsc_code(props.route.params.ifsc_code);
+        setAccount_number(props.route.params.account_no);
+        setUpi_id(props.route.params.upi_id);
+        setHolder_name(props.route.params.acc_holder_name);
+    }, []);
+
+    const showErrorToast = (message) => {
+        Toast.show(message, Toast.LONG);
+    }
+
+    const handleSubmit = async () => {
+        if (!bank_name || !branch_name || !account_number || !ifsc_code || !holder_name || !upi_id) {
+            showErrorToast("Please fill all the fields");
+            return;
+        }
+        try {
+            const response = await axios.put(
+                `${base_url}/api/update-bank-details/${props.route.params.id}`,
+                {
+                    bank_name,
+                    branch_name,
+                    account_no: account_number,
+                    ifsc_code,
+                    acc_holder_name: holder_name,
+                    upi_id
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                Toast.show("Bank details updated successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                showErrorToast(response.data.message || "Failed to update bank details");
+            }
+        } catch (error) {
+            showErrorToast("An error occurred. Please try again.");
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -64,7 +115,6 @@ const EditBank = (props) => {
                     <TextInput
                         style={[styles.input, (isFocused === 'account_number' || account_number !== '') && styles.focusedInput]}
                         value={account_number}
-                        maxLength={10}
                         onChangeText={(text) => setAccount_number(text)}
                         onFocus={() => setIsFocused('account_number')}
                         onBlur={() => setIsFocused(null)}
@@ -92,7 +142,7 @@ const EditBank = (props) => {
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={handleSubmit}>
                     <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                         <Text style={styles.submitText}>Submit</Text>
                     </LinearGradient>

@@ -8,6 +8,9 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const EditFestival = (props) => {
 
@@ -20,7 +23,6 @@ const EditFestival = (props) => {
 
     const [festivalImages, setFestivalImages] = useState([]);
     const [festivalImageCount, setFestivalImageCount] = useState('Select Images');
-
     // Handle image selection using react-native-image-picker
     const selectTempleImages = async () => {
         const options = {
@@ -46,13 +48,67 @@ const EditFestival = (props) => {
             }
         });
     };
-
     // Remove image by index
     const removeImage = (indexToRemove) => {
         const updatedImages = festivalImages.filter((_, index) => index !== indexToRemove);
         setFestivalImages(updatedImages);
         setFestivalImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
     };
+
+    useEffect(() => {
+        // console.log("object", props.route.params);
+        setFestival_name(props.route.params.festival_name);
+        setFestival_desc(props.route.params.festival_descp);
+        setFastival_date(new Date(props.route.params.festival_date));
+    }, []);
+
+    const showErrorToast = (message) => {
+        Toast.show(message, Toast.LONG);
+    };
+
+    const handleSubmit = async () => {
+        if (!festival_name || !fastival_date || !festival_desc) {
+            showErrorToast("Please fill all the fields");
+            return;
+        }
+
+        // const formData = new FormData();
+        // formData.append('festival_name', festival_name);
+        // formData.append('festival_date', moment(fastival_date).format("YYYY-MM-DD"));
+        // formData.append('festival_descp', festival_desc);
+        // festivalImages.forEach((image, index) => {
+        //     formData.append(`festival_image_${index}`, {
+        //         uri: image.uri,
+        //         type: image.type,
+        //         name: image.fileName,
+        //     });
+        // });
+
+        try {
+            const response = await axios.put(
+                `${base_url}/api/update-festival/${props.route.params.id}`,
+                {
+                    festival_name: festival_name,
+                    festival_date: moment(fastival_date).format("YYYY-MM-DD"),
+                    festival_descp: festival_desc
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`
+                    }
+                }
+            );
+
+            if (response.status === 200) {
+                Toast.show("Festival updated successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                showErrorToast(response.data.message || "Failed to update festival");
+            }
+        } catch (error) {
+            showErrorToast("An error occurred. Please try again.");
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -105,14 +161,13 @@ const EditFestival = (props) => {
                     <TextInput
                         style={[styles.input, (isFocused === 'festival_desc' || festival_desc !== '') && styles.focusedInput]}
                         value={festival_desc}
-                        maxLength={10}
                         onChangeText={(text) => setFestival_desc(text)}
                         onFocus={() => setIsFocused('festival_desc')}
                         onBlur={() => setIsFocused(null)}
                     />
 
                     {/* Image Upload Section */}
-                    <View>
+                    {/* <View>
                         <Text style={[styles.label, (festivalImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Festival Images</Text>
                         <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
                             <TextInput
@@ -125,14 +180,12 @@ const EditFestival = (props) => {
                                 <Text style={styles.chooseBtnText}>Choose Files</Text>
                             </View>
                         </TouchableOpacity>
-                        {/* Display selected images with remove (cross) icon */}
                         <View style={styles.imagePreviewContainer}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 {festivalImages.length > 0 ? (
                                     festivalImages.map((image, index) => (
                                         <View key={index} style={styles.imageWrapper}>
                                             <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            {/* Cross icon to remove the image */}
                                             <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
                                                 <Icon name="cancel" size={24} color="red" />
                                             </TouchableOpacity>
@@ -141,10 +194,10 @@ const EditFestival = (props) => {
                                 ) : null}
                             </ScrollView>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={handleSubmit}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

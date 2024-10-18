@@ -8,7 +8,15 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 const ViewBank = (props) => {
 
     const navigation = useNavigation();
+    const isFocused = useIsFocused();
     const [bank_details, setBank_details] = useState(null);
+
+    useEffect(() => {
+        if (isFocused) {
+            console.log("Bank Details", props.route.params);
+            setBank_details(props.route.params);
+        }
+    }, [isFocused]);
 
     return (
         <View style={styles.container}>
@@ -22,8 +30,8 @@ const ViewBank = (props) => {
                 <View style={styles.bankBox}>
                     <FontAwesome name="bank" color={'#000'} size={24} />
                     <View style={{ marginLeft: 10 }}>
-                        <Text style={{ fontSize: 15, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>AXIS BANK</Text>
-                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Nayapali</Text>
+                        <Text style={{ fontSize: 15, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{bank_details?.bank_name} Bank</Text>
+                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{bank_details?.branch_name}</Text>
                     </View>
                 </View>
                 <View style={styles.detailBox}>
@@ -32,7 +40,10 @@ const ViewBank = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#646665', letterSpacing: 0.6 }}>Account Number</Text>
                         </View>
                         <View style={{ width: '60%' }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>xxxxxxx9868</Text>
+                            {/* <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>{bank_details?.account_no}</Text> */}
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>
+                                {bank_details?.account_no.replace(/(\d{4})(\d+)/, '$1******')}
+                            </Text>
                         </View>
                     </View>
                     <View style={{ width: '100%', flexDirection: 'row', marginTop: 10 }}>
@@ -40,7 +51,7 @@ const ViewBank = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#646665', letterSpacing: 0.6 }}>IFSC Code</Text>
                         </View>
                         <View style={{ width: '60%' }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>IFSCC98997</Text>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>{bank_details?.ifsc_code}</Text>
                         </View>
                     </View>
                     <View style={{ width: '100%', flexDirection: 'row', marginTop: 10 }}>
@@ -48,7 +59,7 @@ const ViewBank = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#646665', letterSpacing: 0.6 }}>Branch Name</Text>
                         </View>
                         <View style={{ width: '60%' }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>Nayapali</Text>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>{bank_details?.branch_name}</Text>
                         </View>
                     </View>
                     <View style={{ width: '100%', flexDirection: 'row', marginTop: 10 }}>
@@ -56,7 +67,7 @@ const ViewBank = (props) => {
                             <Text style={{ fontSize: 14, fontWeight: '500', color: '#646665', letterSpacing: 0.6 }}>Status</Text>
                         </View>
                         <View style={{ width: '60%' }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>Active</Text>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#545353', letterSpacing: 0.6 }}>{bank_details?.status}</Text>
                         </View>
                     </View>
                 </View>

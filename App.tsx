@@ -47,6 +47,10 @@ import EditPooja from './src/Screens/Pooja_booking/EditPooja'
 import Banner from './src/Screens/Banner/Index'
 import AddBanner from './src/Screens/Banner/AddBanner'
 import EditBanner from './src/Screens/Banner/EditBanner'
+// Temple Inside Temple
+import Temple_insideTemples from './src/Screens/Temple_insideTemples/Index'
+import AddInsideTemple from './src/Screens/Temple_insideTemples/AddInsideTemple'
+import EditInsideTemple from './src/Screens/Temple_insideTemples/EditInsideTemple'
 
 import Management from './src/Screens/Management/Index'
 import Prashad_time from './src/Screens/Prashad_time/Index'
@@ -55,7 +59,6 @@ import Daily_rituals from './src/Screens/Daily_rituals/Index'
 import Darshan_time from './src/Screens/Darshan_time/Index'
 import Donation from './src/Screens/Donation/Index'
 import Temple_inventory from './src/Screens/Temple_inventory/Index'
-import Temple_insideTemples from './src/Screens/Temple_insideTemples/Index'
 import Temple_vendors from './src/Screens/Temple_vendors/Index'
 import Temple_devotees from './src/Screens/Temple_devotees/Index'
 import Temple_Finance from './src/Screens/Temple_Finance/Index'
@@ -131,6 +134,10 @@ const App = () => {
             <Stack.Screen name="Banner" component={Banner} />
             <Stack.Screen name="AddBanner" component={AddBanner} />
             <Stack.Screen name="EditBanner" component={EditBanner} />
+            {/* Temple Inside Temple */}
+            <Stack.Screen name="Temple_insideTemples" component={Temple_insideTemples} />
+            <Stack.Screen name="AddInsideTemple" component={AddInsideTemple} />
+            <Stack.Screen name="EditInsideTemple" component={EditInsideTemple} />
 
             <Stack.Screen name="Management" component={Management} />
             <Stack.Screen name="Prashad_time" component={Prashad_time} />
@@ -139,7 +146,6 @@ const App = () => {
             <Stack.Screen name="Darshan_time" component={Darshan_time} />
             <Stack.Screen name="Donation" component={Donation} />
             <Stack.Screen name="Temple_inventory" component={Temple_inventory} />
-            <Stack.Screen name="Temple_insideTemples" component={Temple_insideTemples} />
             <Stack.Screen name="Temple_vendors" component={Temple_vendors} />
             <Stack.Screen name="Temple_devotees" component={Temple_devotees} />
             <Stack.Screen name="Temple_Finance" component={Temple_Finance} />

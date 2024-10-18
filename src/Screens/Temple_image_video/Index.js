@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video';
@@ -8,6 +8,9 @@ import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const Index = (props) => {
 
@@ -97,6 +100,72 @@ const Index = (props) => {
         setTempleVideoCount(updatedVideos.length > 0 ? `Uploaded ${updatedVideos.length} Videos` : 'Select Videos');
     };
 
+    const showErrorToast = (message) => {
+        Toast.show(message, Toast.LONG);
+    };
+
+    const handleSubmit = async () => {
+        const formData = new FormData();
+        templeImages.forEach((image, index) => {
+            formData.append('temple_images[]', {
+                uri: image.uri,
+                type: image.type,
+                name: image.fileName,
+            });
+        });
+        templeVideos.forEach((video, index) => {
+            formData.append('temple_videos[]', {
+                uri: video.uri,
+                type: video.type,
+                name: video.fileName,
+            });
+        });
+
+        try {
+            const response = await axios.post(`${base_url}/api/update-photos-videos`, formData, {
+                headers: {
+                    Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            if (response.status === 200) {
+                console.log("object", response.data);
+                showErrorToast('Data posted successfully');
+            } else {
+                showErrorToast('Error posting data: Unexpected response status', response.status);
+            }
+        } catch (error) {
+            showErrorToast('Error posting data:', error);
+        }
+    }
+
+    const fetchTempleMedia = async () => {
+        try {
+            const response = await axios.get(`${base_url}/api/temple-photos-videos`, {
+                headers: {
+                    Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`,
+                },
+            });
+
+            if (response.status === 200) {
+                setTempleImages(response.data.data.temple_images);
+                setTempleImageCount(`Uploaded ${response.data.data.temple_images.length} Images`);
+                setTempleVideos(response.data.data.temple_videos);
+                setTempleVideoCount(`Uploaded ${response.data.data.temple_videos.length} Videos`);
+                setPausedVideos(response.data.data.temple_videos.map(() => true));
+            } else {
+                showErrorToast('Error fetching data: Unexpected response status', response.status);
+            }
+        } catch (error) {
+            showErrorToast('Error fetching data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchTempleMedia();
+    }, []);
+
     return (
         <View style={styles.container}>
             <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
@@ -137,7 +206,7 @@ const Index = (props) => {
                                 {templeImages.length > 0 ? (
                                     templeImages.map((image, index) => (
                                         <View key={index} style={styles.imageWrapper}>
-                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+                                            <Image source={{ uri: `${base_url}${image.uri}` }} style={styles.imagePreview} />
                                             {/* Cross icon to remove the image */}
                                             <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
                                                 <Icon name="cancel" size={24} color="red" />
@@ -170,7 +239,7 @@ const Index = (props) => {
                                     templeVideos.map((video, index) => (
                                         <View key={index} style={styles.videoWrapper}>
                                             <Video
-                                                source={{ uri: video.uri }}
+                                                source={{ uri: `${base_url}${video.uri}` }}
                                                 style={styles.videoPreview}
                                                 paused={pausedVideos[index]} // Control play/pause based on state
                                                 resizeMode="cover"
@@ -192,7 +261,7 @@ const Index = (props) => {
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('BankDetails')}>
+                <TouchableOpacity onPress={handleSubmit}>
                     <LinearGradient colors={['#c9170a', '#f0837f']} style={styles.submitButton}>
                         <Text style={styles.submitText}>Submit</Text>
                     </LinearGradient>

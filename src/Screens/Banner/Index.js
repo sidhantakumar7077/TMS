@@ -50,9 +50,8 @@ const Index = (props) => {
                         </View>
                         <View style={{ width: '5%' }}></View>
                         <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>Pooja Name</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>₹1000</Text>
-                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Pooja Description</Text>
+                            <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>Banner Type</Text>
+                            <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>Banner Description</Text>
                         </View>
                         <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
                             <TouchableOpacity onPress={() => props.navigation.navigate('EditBanner')} style={{ backgroundColor: '#fff' }}>
