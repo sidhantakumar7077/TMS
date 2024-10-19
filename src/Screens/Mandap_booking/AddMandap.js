@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const AddMandap = (props) => {
 
@@ -19,7 +21,7 @@ const AddMandap = (props) => {
     const [mandapType, setMandapType] = useState(null);
     const [mandapTypeOpen, setMandapTypeOpen] = useState(false);
     const [mandapTypes, setMandapTypes] = useState([
-        { label: 'Day Basis', value: 'day_basis' },
+        { label: 'Day Basis', value: 'day-basis' },
         { label: 'Event Basis', value: 'event_basis' },
     ]);
 
@@ -58,6 +60,44 @@ const AddMandap = (props) => {
         setMandapImages(updatedImages);
         setMandapImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
     };
+
+    const submitMandap = async () => {
+        if (mandap_name === '') {
+            Toast.show('Mandap name is required', Toast.LONG);
+            return;
+        } if (mandapType === null) {
+            Toast.show('Mandap type is required', Toast.LONG);
+            return;
+        } if (price === '') {
+            Toast.show('Price is required', Toast.LONG);
+            return;
+        } if (mandap_desc === '') {
+            Toast.show('Mandap description is required', Toast.LONG);
+            return;
+        }
+
+        try {
+            const response = await axios.post(`${base_url}/api/add-mandap`, {
+                mandap_name: mandap_name,
+                booking_type: mandapType,
+                event_name: eventName,
+                price_per_day: price,
+                mandap_description: mandap_desc,
+            }, {
+                headers: {
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                }
+            });
+            if (response.status === 201) {
+                Toast.show("Mandap added successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to add mandap', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to add mandap', Toast.LONG);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -137,6 +177,7 @@ const AddMandap = (props) => {
                         onChangeText={(text) => setPrice(text)}
                         onFocus={() => setIsFocused('price')}
                         onBlur={() => setIsFocused(null)}
+                        keyboardType='numeric'
                     />
 
                     <Text style={[styles.label, (isFocused === 'mandap_desc' || mandap_desc !== '') && styles.focusedLabel]}>Mandap Description</Text>
@@ -148,7 +189,7 @@ const AddMandap = (props) => {
                         onBlur={() => setIsFocused(null)}
                     />
                     {/* Image Upload Section */}
-                    <View>
+                    {/* <View>
                         <Text style={[styles.label, (mandapImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Mandap Images</Text>
                         <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
                             <TextInput
@@ -161,14 +202,12 @@ const AddMandap = (props) => {
                                 <Text style={styles.chooseBtnText}>Choose Files</Text>
                             </View>
                         </TouchableOpacity>
-                        {/* Display selected images with remove (cross) icon */}
                         <View style={styles.imagePreviewContainer}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 {mandapImages.length > 0 ? (
                                     mandapImages.map((image, index) => (
                                         <View key={index} style={styles.imageWrapper}>
                                             <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            {/* Cross icon to remove the image */}
                                             <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
                                                 <Icon name="cancel" size={24} color="red" />
                                             </TouchableOpacity>
@@ -177,10 +216,10 @@ const AddMandap = (props) => {
                                 ) : null}
                             </ScrollView>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
 
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={submitMandap}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

@@ -102,32 +102,35 @@ const Index = (props) => {
                     <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 100, alignSelf: 'center', marginVertical: 10 }}></View>
                 </View>
                 <View style={{ flex: 1 }}>
-                    <FlatList
-                        data={newsList}
-                        keyExtractor={(item) => item.id.toString()}
-                        scrollEnabled={false}
-                        renderItem={({ item }) => (
-                            <View style={styles.newsBox}>
-                                <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
-                                    <FontAwesome6 name="newspaper" color={'#000'} size={25} />
+                    {newsList.length > 0 ?
+                        <FlatList
+                            data={newsList}
+                            keyExtractor={(item) => item.id.toString()}
+                            scrollEnabled={false}
+                            renderItem={({ item }) => (
+                                <View style={styles.newsBox}>
+                                    <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
+                                        <FontAwesome6 name="newspaper" color={'#000'} size={25} />
+                                    </View>
+                                    <View style={{ width: '5%' }}></View>
+                                    <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                                        <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item.notice_name}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item.notice_date}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item.notice_descp}</Text>
+                                    </View>
+                                    <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                                        <TouchableOpacity onPress={() => props.navigation.navigate('EditNews', item)} style={{ backgroundColor: '#fff' }}>
+                                            <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => showNewsDeleteModal(item.id)} style={{ backgroundColor: '#fff', marginTop: 10 }}>
+                                            <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                                        </TouchableOpacity>
+                                    </View>
                                 </View>
-                                <View style={{ width: '5%' }}></View>
-                                <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                    <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item.notice_name}</Text>
-                                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item.notice_date}</Text>
-                                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item.notice_descp}</Text>
-                                </View>
-                                <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                                    <TouchableOpacity onPress={() => props.navigation.navigate('EditNews', item)} style={{ backgroundColor: '#fff' }}>
-                                        <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
-                                    </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => showNewsDeleteModal(item.id)} style={{ backgroundColor: '#fff', marginTop: 10 }}>
-                                        <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        )}
-                    />
+                            )}
+                        />
+                        : <Text style={{ textAlign: 'center', top: 200, color: '#000', fontSize: 18 }}>No News available!</Text>
+                    }
                 </View>
             </ScrollView>
             <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>

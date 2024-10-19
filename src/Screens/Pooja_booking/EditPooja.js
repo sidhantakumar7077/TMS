@@ -1,10 +1,13 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const EditPooja = (props) => {
 
@@ -15,13 +18,12 @@ const EditPooja = (props) => {
     const [isFocused, setIsFocused] = useState(null);
 
     const [poojaImages, setPoojaImages] = useState([]);
-    const [poojaImageCount, setPoojaImageCount] = useState('Select Images');
+    const [poojaImageName, setPoojaImageName] = useState('Select Images');
 
     // Handle image selection using react-native-image-picker
     const selectTempleImages = async () => {
         const options = {
             title: 'Select Images',
-            selectionLimit: 0, // Allows multiple image selection
             mediaType: 'photo',
             includeBase64: false,
             storageOptions: {
@@ -37,18 +39,57 @@ const EditPooja = (props) => {
                 console.log('ImagePicker Error: ', response.error);
             } else {
                 const selectedImages = response.assets;
-                setPoojaImages([...poojaImages, ...selectedImages]); // Add new images to the array
-                setPoojaImageCount(`Select ${poojaImages.length + selectedImages.length} Images`);
+                setPoojaImages(selectedImages[0]);
+                // console.log("object", selectedImages);
+                setPoojaImageName(selectedImages[0].fileName);
             }
         });
     };
 
-    // Remove image by index
-    const removeImage = (indexToRemove) => {
-        const updatedImages = poojaImages.filter((_, index) => index !== indexToRemove);
-        setPoojaImages(updatedImages);
-        setPoojaImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
-    };
+    const submitPooja = async () => {
+        if (!pooja_name || !price) {
+            Toast.show('Please fill all the fields', Toast.LONG);
+            return;
+        }
+        const formData = new FormData();
+        formData.append('pooja_name', pooja_name);
+        formData.append('pooja_price', price);
+        formData.append('pooja_descp', pooja_desc);
+        formData.append('inside_temple_id', ''); // Ensure this field is not null
+        if (poojaImages && poojaImages.uri) {
+            formData.append('pooja_image', {
+                uri: poojaImages.uri,
+                type: poojaImages.type,
+                name: poojaImages.fileName,
+            });
+        }
+        try {
+            const response = await axios.post(
+                `${base_url}/api/update-pooja/${props.route.params.id}`, formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`
+                    }
+                }
+            );
+            if (response.status === 200) {
+                Toast.show('Pooja updated successfully', Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show(response.data.message || 'Failed to update pooja', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to update pooja', Toast.LONG);
+        }
+    }
+
+    useEffect(() => {
+        setPooja_name(props.route.params.pooja_name);
+        setPrice(props.route.params.pooja_price);
+        setPooja_desc(props.route.params.pooja_descp);
+        setPoojaImageName(props.route.params.pooja_image);
+    }, []);
 
     return (
         <View style={styles.container}>
@@ -89,43 +130,27 @@ const EditPooja = (props) => {
                         onChangeText={(text) => setPrice(text)}
                         onFocus={() => setIsFocused('price')}
                         onBlur={() => setIsFocused(null)}
+                        keyboardType='numeric'
                     />
 
                     {/* Image Upload Section */}
                     <View>
-                        <Text style={[styles.label, (poojaImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Pooja Images</Text>
+                        <Text style={[styles.label, (poojaImageName !== 'Select Images') && styles.focusedLabel]}>Upload Pooja Images</Text>
                         <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
                             <TextInput
                                 style={styles.filePickerText}
                                 editable={false}
-                                placeholder={poojaImageCount}
+                                placeholder={poojaImageName}
                                 placeholderTextColor={'#000'}
                             />
                             <View style={styles.chooseBtn}>
                                 <Text style={styles.chooseBtnText}>Choose Files</Text>
                             </View>
                         </TouchableOpacity>
-
-                        {/* Display selected images with remove (cross) icon */}
-                        <View style={styles.imagePreviewContainer}>
-                            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                                {poojaImages.length > 0 ? (
-                                    poojaImages.map((image, index) => (
-                                        <View key={index} style={styles.imageWrapper}>
-                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            {/* Cross icon to remove the image */}
-                                            <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                                <Icon name="cancel" size={24} color="red" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    ))
-                                ) : null}
-                            </ScrollView>
-                        </View>
                     </View>
                 </View>
 
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={submitPooja}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

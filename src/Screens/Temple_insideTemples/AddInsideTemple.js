@@ -4,6 +4,9 @@ import { launchImageLibrary } from 'react-native-image-picker';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const AddInsideTemple = (props) => {
 
@@ -37,6 +40,39 @@ const AddInsideTemple = (props) => {
                 // console.log("selected image-=-=", response.assets[0])
             }
         });
+    };
+
+    const submitInsideTemple = async () => {
+        if (!temple_photoSource.uri || !temple_name || !temple_about) {
+            Toast.show('Please fill all the fields', Toast.LONG);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('inside_temple_name', temple_name);
+        formData.append('inside_temple_about', temple_about);
+        formData.append('inside_temple_image', {
+            uri: temple_photoSource.uri,
+            type: temple_photoSource.type,
+            name: temple_photoSource.fileName
+        });
+
+        try {
+            const response = await axios.post(`${base_url}/api/add-inside-temple`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                }
+            });
+            if (response.status === 200) {
+                Toast.show('Inside Temple added successfully', Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to add inside temple', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to add inside temple', Toast.LONG);
+        }
     };
 
     return (
@@ -92,7 +128,7 @@ const AddInsideTemple = (props) => {
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={submitInsideTemple}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

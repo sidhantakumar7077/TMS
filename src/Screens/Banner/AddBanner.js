@@ -5,6 +5,9 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const AddBanner = (props) => {
 
@@ -44,6 +47,39 @@ const AddBanner = (props) => {
                 // console.log("selected image-=-=", response.assets[0])
             }
         });
+    };
+
+    const submitBanner = async () => {
+        if (!banner_photoSource.uri || !desc || !bannerType) {
+            Toast.show('Please fill all the fields', Toast.LONG);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('banner_descp', desc);
+        formData.append('banner_type', bannerType);
+        formData.append('banner_image', {
+            uri: banner_photoSource.uri,
+            type: banner_photoSource.type,
+            name: banner_photoSource.fileName
+        });
+
+        try {
+            const response = await axios.post(`${base_url}/api/add-banner`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                }
+            });
+            if (response.status === 200) {
+                Toast.show("Banner added successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to add banner', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to add banner', Toast.LONG);
+        }
     };
 
     return (
@@ -123,7 +159,7 @@ const AddBanner = (props) => {
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={submitBanner}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

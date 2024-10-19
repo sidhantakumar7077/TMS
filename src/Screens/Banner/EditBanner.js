@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react'
 import { launchImageLibrary } from 'react-native-image-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation, useIsFocused } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const EditBanner = (props) => {
 
@@ -45,6 +48,48 @@ const EditBanner = (props) => {
             }
         });
     };
+
+    const submitBanner = async () => {
+        if (!banner_photo || !desc || !bannerType) {
+            Toast.show('Please fill all the fields', Toast.LONG);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('banner_descp', desc);
+        formData.append('banner_type', bannerType);
+        if (banner_photo !== 'Select Image' && banner_photoSource) {
+            formData.append('banner_image', {
+                uri: banner_photoSource.uri,
+                type: banner_photoSource.type,
+                name: banner_photoSource.fileName,
+            });
+        }
+
+        try {
+            const response = await axios.post(`${base_url}/api/update-banner`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                }
+            });
+            if (response.status === 200) {
+                Toast.show("Banner added successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to add banner', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to add banner', Toast.LONG);
+        }
+    }
+
+    useEffect(() => {
+        console.log('Edit Banner Screen', props.route.params);
+        setDesc(props.route.params.banner_descp);
+        setBannerType(props.route.params.banner_type);
+        setBanner_photo(props.route.params.banner_image);
+    }, [])
 
     return (
         <View style={styles.container}>
@@ -123,7 +168,7 @@ const EditBanner = (props) => {
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={submitBanner}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

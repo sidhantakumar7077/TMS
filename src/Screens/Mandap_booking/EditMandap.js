@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const EditMandap = (props) => {
 
@@ -19,7 +21,7 @@ const EditMandap = (props) => {
     const [mandapType, setMandapType] = useState(null);
     const [mandapTypeOpen, setMandapTypeOpen] = useState(false);
     const [mandapTypes, setMandapTypes] = useState([
-        { label: 'Day Basis', value: 'day_basis' },
+        { label: 'Day Basis', value: 'day-basis' },
         { label: 'Event Basis', value: 'event_basis' },
     ]);
 
@@ -58,6 +60,62 @@ const EditMandap = (props) => {
         setMandapImages(updatedImages);
         setMandapImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
     };
+
+    useEffect(() => {
+        // console.log("Mandap Details", props.route.params);
+        setMandap_name(props.route.params.mandap_name);
+        setPrice(props.route.params.price_per_day);
+        setMandap_desc(props.route.params.mandap_description);
+        setEventName(props.route.params.event_name);
+        setMandapType(props.route.params.booking_type);
+    }, []);
+
+    const submitMandap = async () => {
+        if (mandap_name === '') {
+            Toast.show('Mandap name is required', Toast.LONG);
+            return;
+        } if (mandapType === null) {
+            Toast.show('Mandap type is required', Toast.LONG);
+            return;
+        } if (price === '') {
+            Toast.show('Price is required', Toast.LONG);
+            return;
+        } if (mandap_desc === '') {
+            Toast.show('Mandap description is required', Toast.LONG);
+            return;
+        }
+
+        try {
+            const requestData = {
+                mandap_name: mandap_name,
+                mandap_description: mandap_desc,
+                booking_type: mandapType,
+                price_per_day: price,
+            };
+
+            if (mandapType === 'event_basis') {
+                requestData.event_name = eventName;
+            }
+
+            const response = await axios.put(`${base_url}/api/mandaps/${props.route.params.id}`,
+                requestData,
+                {
+                    headers: {
+                        Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                    }
+                });
+            // console.log("object", response.data);
+            // return;
+            if (response.data.status === 200) {
+                Toast.show("Mandap updated successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to update mandap', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to update mandap1', Toast.LONG);
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -137,6 +195,7 @@ const EditMandap = (props) => {
                         onChangeText={(text) => setPrice(text)}
                         onFocus={() => setIsFocused('price')}
                         onBlur={() => setIsFocused(null)}
+                        keyboardType='numeric'
                     />
 
                     <Text style={[styles.label, (isFocused === 'mandap_desc' || mandap_desc !== '') && styles.focusedLabel]}>Mandap Description</Text>
@@ -148,7 +207,7 @@ const EditMandap = (props) => {
                         onBlur={() => setIsFocused(null)}
                     />
                     {/* Image Upload Section */}
-                    <View>
+                    {/* <View>
                         <Text style={[styles.label, (mandapImageCount !== 'Select Images') && styles.focusedLabel]}>Upload Mandap Images</Text>
                         <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTempleImages}>
                             <TextInput
@@ -161,14 +220,12 @@ const EditMandap = (props) => {
                                 <Text style={styles.chooseBtnText}>Choose Files</Text>
                             </View>
                         </TouchableOpacity>
-                        {/* Display selected images with remove (cross) icon */}
                         <View style={styles.imagePreviewContainer}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                                 {mandapImages.length > 0 ? (
                                     mandapImages.map((image, index) => (
                                         <View key={index} style={styles.imageWrapper}>
                                             <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                            {/* Cross icon to remove the image */}
                                             <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
                                                 <Icon name="cancel" size={24} color="red" />
                                             </TouchableOpacity>
@@ -177,10 +234,10 @@ const EditMandap = (props) => {
                                 ) : null}
                             </ScrollView>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
 
-                <TouchableOpacity onPress={() => props.navigation.goBack()}>
+                <TouchableOpacity onPress={submitMandap}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}
