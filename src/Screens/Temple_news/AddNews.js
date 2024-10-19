@@ -6,6 +6,9 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const AddNews = (props) => {
 
@@ -15,6 +18,38 @@ const AddNews = (props) => {
     const [dateOpen, setDateOpen] = useState(false);
     const [notice_desc, setNotice_desc] = useState('');
     const [isFocused, setIsFocused] = useState(null);
+
+    const submitNews = async () => {
+        // console.log("object", notice_name, notice_date, notice_desc);
+        // return;
+
+        if (notice_name === '') {
+            Toast.show('Notice name is required', Toast.LONG);
+            return;
+        } if (notice_date === null) {
+            Toast.show('Notice date is required', Toast.LONG);
+            return;
+        }
+        try {
+            const response = await axios.post(`${base_url}/api/store-news`, {
+                notice_name: notice_name,
+                notice_date: moment(notice_date).format("YYYY-MM-DD"),
+                notice_descp: notice_desc
+            }, {
+                headers: {
+                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                }
+            });
+            if (response.status === 200) {
+                Toast.show("News added successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to add news', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to add news', Toast.LONG);
+        }
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -67,7 +102,6 @@ const AddNews = (props) => {
                 <TextInput
                     style={[styles.input, (isFocused === 'notice_desc' || notice_desc !== '') && styles.focusedInput]}
                     value={notice_desc}
-                    maxLength={10}
                     onChangeText={(text) => setNotice_desc(text)}
                     onFocus={() => setIsFocused('notice_desc')}
                     onBlur={() => setIsFocused(null)}
@@ -75,7 +109,7 @@ const AddNews = (props) => {
             </View>
 
             {/* Submit Button */}
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+            <TouchableOpacity onPress={submitNews}>
                 <LinearGradient
                     colors={['#c9170a', '#f0837f']}
                     style={styles.submitButton}

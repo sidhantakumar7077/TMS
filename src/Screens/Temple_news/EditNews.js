@@ -6,6 +6,9 @@ import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const EditNews = (props) => {
 
@@ -15,6 +18,47 @@ const EditNews = (props) => {
     const [dateOpen, setDateOpen] = useState(false);
     const [notice_desc, setNotice_desc] = useState('');
     const [isFocused, setIsFocused] = useState(null);
+
+    useEffect(() => {
+        // console.log("object", props.route.params);
+        setNotice_name(props.route.params.notice_name);
+        setNotice_date(new Date(props.route.params.notice_date));
+        setNotice_desc(props.route.params.notice_descp);
+    }, [])
+
+    const showErrorToast = (message) => {
+        Toast.show(message, Toast.LONG);
+    };
+
+    const submitNews = async () => {
+        if (notice_name === '' || notice_date === null) {
+            showErrorToast('All fields are required');
+            return;
+        }
+
+        try {
+            const response = await axios.put(`${base_url}/api/news/${props.route.params.id}`,
+                {
+                    notice_name: notice_name,
+                    notice_date: moment(notice_date).format("YYYY-MM-DD"),
+                    notice_descp: notice_desc
+                },
+                {
+                    headers: {
+                        Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                        'Content-Type': 'application/json'
+                    }
+                });
+            if (response.status === 200) {
+                Toast.show("News updated successfully", Toast.LONG);
+                navigation.goBack();
+            } else {
+                showErrorToast('Failed to update news');
+            }
+        } catch (error) {
+            showErrorToast('Failed to update news');
+        }
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -67,7 +111,6 @@ const EditNews = (props) => {
                 <TextInput
                     style={[styles.input, (isFocused === 'notice_desc' || notice_desc !== '') && styles.focusedInput]}
                     value={notice_desc}
-                    maxLength={10}
                     onChangeText={(text) => setNotice_desc(text)}
                     onFocus={() => setIsFocused('notice_desc')}
                     onBlur={() => setIsFocused(null)}
@@ -75,7 +118,7 @@ const EditNews = (props) => {
             </View>
 
             {/* Submit Button */}
-            <TouchableOpacity onPress={() => props.navigation.goBack()}>
+            <TouchableOpacity onPress={submitNews}>
                 <LinearGradient
                     colors={['#c9170a', '#f0837f']}
                     style={styles.submitButton}
