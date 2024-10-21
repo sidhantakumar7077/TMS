@@ -172,7 +172,7 @@ const Index = (props) => {
                 </View>
             </View>
 
-            {/* Start Banner Modal */}
+            {/* Start Inside Temple Modal */}
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -199,7 +199,7 @@ const Index = (props) => {
                     </View>
                 </View>
             </Modal>
-            {/* End Banner Modal */}
+            {/* End Inside Temple Modal */}
         </View>
     )
 }
