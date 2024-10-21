@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TouchableHighlight, FlatList, Image, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, TouchableHighlight, FlatList, Image, ScrollView, BackHandler, ToastAndroid } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import DrawerModal from '../../Component/DrawerModal';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -216,6 +216,7 @@ const CalendarTab = () => {
 
 const Index = (props) => {
     const navigation = useNavigation();
+    const isFocused = useIsFocused();
     const [isModalVisible, setModalVisible] = useState(false);
     const openModal = () => { setModalVisible(true) };
     const closeModal = () => { setModalVisible(false) };
@@ -244,6 +245,27 @@ const Index = (props) => {
             inactiveColor="#757575"  // Inactive color for tab
         />
     );
+
+    const [backPressCount, setBackPressCount] = useState(0);
+
+    useEffect(() => {
+        const handleBackPress = () => {
+            if (backPressCount === 1) {
+                BackHandler.exitApp(); // Exit the app if back button is pressed twice within 2 seconds
+                return true;
+            }
+            ToastAndroid.show('Press back again to exit', ToastAndroid.SHORT);
+            setBackPressCount(1);
+            const timeout = setTimeout(() => {
+                setBackPressCount(0);
+            }, 2000); // Reset back press count after 2 seconds
+            return true; // Prevent default behavior
+        };
+        if (isFocused) {
+            const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+            return () => backHandler.remove(); // Cleanup the event listener when the component unmounts or navigates away
+        }
+    }, [backPressCount, isFocused]);
 
     return (
         <View style={styles.container}>

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, TouchableHighlight, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -23,13 +23,15 @@ const Index = (props) => {
     const [mandapList, setMandapList] = useState([]);
 
     const fetchMandapList = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.get(`${base_url}/api/mandaps`, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    Authorization: `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {
+                console.log("mandap list", response.data.data);
                 setMandapList(response.data.data);
             } else {
                 Toast.show('Failed to fetch mandap list', Toast.LONG);
@@ -50,10 +52,11 @@ const Index = (props) => {
     }
 
     const deleteMandap = async (id) => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.delete(`${base_url}/api/mandaps/${id}`, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    Authorization: `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {
@@ -116,7 +119,7 @@ const Index = (props) => {
                                     <View style={{ width: '5%' }}></View>
                                     <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
                                         <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item.mandap_name}</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item.event_name}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item.mandap_description}</Text>
                                         <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>₹{item.price_per_day}</Text>
                                     </View>
                                     <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>

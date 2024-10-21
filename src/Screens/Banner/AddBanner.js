@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { launchImageLibrary } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
@@ -50,6 +51,7 @@ const AddBanner = (props) => {
     };
 
     const submitBanner = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (!banner_photoSource.uri || !desc || !bannerType) {
             Toast.show('Please fill all the fields', Toast.LONG);
             return;
@@ -68,7 +70,7 @@ const AddBanner = (props) => {
             const response = await axios.post(`${base_url}/api/add-banner`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    Authorization: `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {

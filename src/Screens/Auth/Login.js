@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Swiper from 'react-native-swiper';
 import { useNavigation } from '@react-navigation/native';
 import { base_url } from '../../../App';
@@ -28,9 +29,9 @@ const Login = (props) => {
     const templeLogin = async () => {
         setIsLoading(true);
         try {
-            const phoneRegex = /^\+91\d{10}$/;
+            const phoneRegex = /^[6-9]\d{9}$/;
             if (phoneNumber === "" || !phoneRegex.test(phoneNumber)) {
-                setErrorMessage('Please enter a valid phone number');
+                setErrorMessage('Please enter a valid phone number.');
                 setShowError(true);
                 setTimeout(() => {
                     setShowError(false);
@@ -42,7 +43,7 @@ const Login = (props) => {
             const formData = new FormData();
             formData.append('phone', phoneNumber);
 
-            const response = await fetch(base_url + 'api/send-otp', {
+            const response = await fetch(base_url + '/api/send-otp', {
                 method: 'POST',
                 body: formData,
             });
@@ -51,7 +52,7 @@ const Login = (props) => {
             if (response.ok) {
                 console.log('OTP sent successfully', data);
                 let phone_orderId = {
-                    phone: phone,
+                    phone: phoneNumber,
                     order_id: data.order_id
                 }
                 navigation.navigate('OtpVerify', phone_orderId);
@@ -124,7 +125,7 @@ const Login = (props) => {
             {isLoading ? (
                 <ActivityIndicator size="large" color="#c80100" />
             ) : (
-                <TouchableOpacity onPress={() => {props.navigation.navigate('OtpVerify')}}>
+                <TouchableOpacity onPress={templeLogin}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.loginButton}

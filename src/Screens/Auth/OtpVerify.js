@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Image, ScrollView, Dimensions } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Swiper from 'react-native-swiper';
+import { useNavigation } from '@react-navigation/native';
+import { base_url } from '../../../App';
 
 const { width } = Dimensions.get('window');
 
@@ -11,11 +14,17 @@ const image2 = require('../../assets/Image/slideImg2.jpeg');
 const image3 = require('../../assets/Image/slideImg4.jpeg');
 
 const OtpVerify = (props) => {
+
+    const navigation = useNavigation();
     const [otp, setOtp] = useState('');
     const [isFocused, setIsFocused] = useState(false);
     const [showResendButton, setShowResendButton] = useState(false);
     const [countdown, setCountdown] = useState(30);
     const [showCountSpinner, setShowCountSpinner] = useState(false);
+
+    const [errorMessage, setErrorMessage] = useState('');
+    const [showError, setShowError] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     // Images for the carousel
     const images = [image1, image2, image3];
@@ -35,6 +44,57 @@ const OtpVerify = (props) => {
                 return prevCountdown - 1;
             });
         }, 1000);
+    };
+
+    const verifyOTP = async () => {
+        setIsLoading(true);
+        try {
+            const otpRegex = /^\d{6}$/;
+            if (otp === "" || !otpRegex.test(otp)) {
+                setErrorMessage('Please enter a valid OTP.');
+                setShowError(true);
+                setTimeout(() => {
+                    setShowError(false);
+                }, 5000);
+                setIsLoading(false);
+                return;
+            }
+            const bodyData = JSON.stringify({
+                orderId: props.route.params.order_id,
+                otp: otp,
+                phoneNumber: '+91' + props.route.params.phone,
+            });
+            const response = await fetch(base_url + '/api/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: bodyData,
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                // console.log('OTP verified successfully', data);
+                await AsyncStorage.setItem('storeAccesstoken', data.token);
+                navigation.replace('Dashboard');
+            } else {
+                // Handle error response
+                setErrorMessage(data.message || 'Failed to verify OTP. Please try again.');
+                setShowError(true);
+                setTimeout(() => {
+                    setShowError(false);
+                }, 5000);
+            }
+        } catch (error) {
+            console.error('Failed to verify OTP', error);
+            setErrorMessage('Failed to verify OTP. Please try again.');
+            setShowError(true);
+            setTimeout(() => {
+                setShowError(false);
+            }, 5000);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const resendOTP = async () => {
@@ -74,25 +134,32 @@ const OtpVerify = (props) => {
 
             {/* OTP Input */}
             <Text style={[styles.label, (isFocused || otp) && styles.focusedLabel]}>Enter OTP</Text>
-            <TextInput
-                style={[styles.input, (isFocused || otp) && styles.focusedInput]}
-                value={otp}
-                maxLength={6}
-                onChangeText={(text) => setOtp(text)}
-                keyboardType="number-pad"
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-            />
+            <View style={{ marginBottom: 45 }}>
+                <TextInput
+                    style={[styles.input, (isFocused || otp) && styles.focusedInput]}
+                    value={otp}
+                    maxLength={6}
+                    onChangeText={(text) => setOtp(text)}
+                    keyboardType="number-pad"
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                />
+                {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
+            </View>
 
             {/* Verify Button */}
-            <TouchableOpacity onPress={() => props.navigation.navigate('Dashboard')}>
-                <LinearGradient
-                    colors={['#c9170a', '#f0837f']}
-                    style={styles.verifyButton}
-                >
-                    <Text style={styles.verifyButtonText}>Verify</Text>
-                </LinearGradient>
-            </TouchableOpacity>
+            {isLoading ? (
+                <ActivityIndicator size="large" color="#c80100" />
+            ) : (
+                <TouchableOpacity onPress={verifyOTP}>
+                    <LinearGradient
+                        colors={['#c9170a', '#f0837f']}
+                        style={styles.verifyButton}
+                    >
+                        <Text style={styles.verifyButtonText}>Verify</Text>
+                    </LinearGradient>
+                </TouchableOpacity>
+            )}
 
             {/* Resend OTP */}
             <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 25 }}>
@@ -169,7 +236,7 @@ const styles = StyleSheet.create({
         height: 40,
         borderBottomWidth: 0.7,
         borderBottomColor: '#757473',
-        marginBottom: 50,
+        // marginBottom: 50,
         color: '#000',
     },
     focusedInput: {
@@ -207,6 +274,14 @@ const styles = StyleSheet.create({
         height: 10,
         borderRadius: 5,
         margin: 3,
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 15,
+        fontWeight: '600',
+        letterSpacing: 0.5,
+        marginLeft: 40,
+        marginTop: 8
     },
 });
 

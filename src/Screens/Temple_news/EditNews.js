@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import DatePicker from 'react-native-date-picker'
 import moment from 'moment';
@@ -31,6 +32,7 @@ const EditNews = (props) => {
     };
 
     const submitNews = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (notice_name === '' || notice_date === null) {
             showErrorToast('All fields are required');
             return;
@@ -45,7 +47,7 @@ const EditNews = (props) => {
                 },
                 {
                     headers: {
-                        Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                        Authorization: `Bearer ${access_token}`,
                         'Content-Type': 'application/json'
                     }
                 });

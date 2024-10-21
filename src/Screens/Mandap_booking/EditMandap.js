@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native'
@@ -22,7 +23,7 @@ const EditMandap = (props) => {
     const [mandapTypeOpen, setMandapTypeOpen] = useState(false);
     const [mandapTypes, setMandapTypes] = useState([
         { label: 'Day Basis', value: 'day-basis' },
-        { label: 'Event Basis', value: 'event_basis' },
+        { label: 'Event Basis', value: 'event-basis' },
     ]);
 
     const [mandapImages, setMandapImages] = useState([]);
@@ -71,6 +72,7 @@ const EditMandap = (props) => {
     }, []);
 
     const submitMandap = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (mandap_name === '') {
             Toast.show('Mandap name is required', Toast.LONG);
             return;
@@ -93,7 +95,7 @@ const EditMandap = (props) => {
                 price_per_day: price,
             };
 
-            if (mandapType === 'event_basis') {
+            if (mandapType === 'event-basis') {
                 requestData.event_name = eventName;
             }
 
@@ -101,7 +103,7 @@ const EditMandap = (props) => {
                 requestData,
                 {
                     headers: {
-                        Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                        Authorization: `Bearer ${access_token}`,
                     }
                 });
             // console.log("object", response.data);
@@ -111,9 +113,11 @@ const EditMandap = (props) => {
                 navigation.goBack();
             } else {
                 Toast.show('Failed to update mandap', Toast.LONG);
+                console.log("Failed to update mandap", response);
             }
         } catch (error) {
-            Toast.show('Failed to update mandap1', Toast.LONG);
+            Toast.show('Failed to update mandap', Toast.LONG);
+            console.log("Failed to update mandap", error);
         }
     }
 
@@ -175,14 +179,14 @@ const EditMandap = (props) => {
                     />
 
                     {/* Conditionally render Event Name field if "Event Basis" is selected */}
-                    {mandapType === 'event_basis' && (
+                    {mandapType === 'event-basis' && (
                         <>
-                            <Text style={[styles.label, (isFocused === 'event_name' || eventName !== '') && styles.focusedLabel]}>Event Name</Text>
+                            <Text style={[styles.label, (isFocused === 'event-name' || eventName !== '') && styles.focusedLabel]}>Event Name</Text>
                             <TextInput
-                                style={[styles.input, (isFocused === 'event_name' || eventName !== '') && styles.focusedInput]}
+                                style={[styles.input, (isFocused === 'event-name' || eventName !== '') && styles.focusedInput]}
                                 value={eventName}
                                 onChangeText={(text) => setEventName(text)}
-                                onFocus={() => setIsFocused('event_name')}
+                                onFocus={() => setIsFocused('event-name')}
                                 onBlur={() => setIsFocused(null)}
                             />
                         </>

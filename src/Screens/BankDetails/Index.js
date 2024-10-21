@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, TouchableHighlight, FlatList, Modal } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
@@ -24,10 +24,11 @@ const Index = (props) => {
     const [bankDetails, setBankDetails] = useState([]);
 
     const fetchBankDetails = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.get(`${base_url}/api/get-bank-details`, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    'Authorization': `Bearer ${access_token}`,
                 }
             });
             // console.log("object", response.data);
@@ -54,10 +55,11 @@ const Index = (props) => {
     const deleteBankDetails = async (id) => {
         // console.log("Bank Id", id);
         // return;
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.delete(`${base_url}/api/delete-bank/${id}`, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    'Authorization': `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {

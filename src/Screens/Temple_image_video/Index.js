@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Video from 'react-native-video';
 import LinearGradient from 'react-native-linear-gradient';
@@ -105,6 +106,7 @@ const Index = (props) => {
     };
 
     const handleSubmit = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         const formData = new FormData();
         templeImages.forEach((image, index) => {
             formData.append('temple_images[]', {
@@ -124,7 +126,7 @@ const Index = (props) => {
         try {
             const response = await axios.post(`${base_url}/api/update-photos-videos`, formData, {
                 headers: {
-                    Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`,
+                    'Authorization': `Bearer ${access_token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });
@@ -141,10 +143,11 @@ const Index = (props) => {
     }
 
     const fetchTempleMedia = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.get(`${base_url}/api/temple-photos-videos`, {
                 headers: {
-                    Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`,
+                    'Authorization': `Bearer ${access_token}`,
                 },
             });
 

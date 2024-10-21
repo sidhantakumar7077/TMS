@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -62,6 +63,7 @@ const AddFestival = (props) => {
     };
 
     const handleSubmit = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (!festival_name || !fastival_date || !festival_desc) {
             showErrorToast("Please fill all the fields");
             return;
@@ -85,7 +87,7 @@ const AddFestival = (props) => {
                 formData,
                 {
                     headers: {
-                        Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`,
+                        'Authorization': `Bearer ${access_token}`,
                         'Content-Type': 'multipart/form-data'
                     }
                 }

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image, TouchableHighlight } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
 import { base_url } from '../../../App';
@@ -33,6 +34,7 @@ const EditBank = (props) => {
     }
 
     const handleSubmit = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (!bank_name || !branch_name || !account_number || !ifsc_code || !holder_name || !upi_id) {
             showErrorToast("Please fill all the fields");
             return;
@@ -50,7 +52,7 @@ const EditBank = (props) => {
                 },
                 {
                     headers: {
-                        Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`
+                        'Authorization': `Bearer ${access_token}`,
                     }
                 }
             );

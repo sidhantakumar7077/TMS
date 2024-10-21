@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native'
@@ -22,7 +23,7 @@ const AddMandap = (props) => {
     const [mandapTypeOpen, setMandapTypeOpen] = useState(false);
     const [mandapTypes, setMandapTypes] = useState([
         { label: 'Day Basis', value: 'day-basis' },
-        { label: 'Event Basis', value: 'event_basis' },
+        { label: 'Event Basis', value: 'event-basis' },
     ]);
 
     const [mandapImages, setMandapImages] = useState([]);
@@ -62,6 +63,7 @@ const AddMandap = (props) => {
     };
 
     const submitMandap = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (mandap_name === '') {
             Toast.show('Mandap name is required', Toast.LONG);
             return;
@@ -85,10 +87,10 @@ const AddMandap = (props) => {
                 mandap_description: mandap_desc,
             }, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76',
+                    Authorization: `Bearer ${access_token}`,
                 }
             });
-            if (response.status === 201) {
+            if (response.status === 200) {
                 Toast.show("Mandap added successfully", Toast.LONG);
                 navigation.goBack();
             } else {
@@ -157,7 +159,7 @@ const AddMandap = (props) => {
                     />
 
                     {/* Conditionally render Event Name field if "Event Basis" is selected */}
-                    {mandapType === 'event_basis' && (
+                    {mandapType === 'event-basis' && (
                         <>
                             <Text style={[styles.label, (isFocused === 'event_name' || eventName !== '') && styles.focusedLabel]}>Event Name</Text>
                             <TextInput

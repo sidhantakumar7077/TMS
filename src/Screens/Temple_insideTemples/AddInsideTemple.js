@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { launchImageLibrary } from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
@@ -43,6 +44,7 @@ const AddInsideTemple = (props) => {
     };
 
     const submitInsideTemple = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (!temple_photoSource.uri || !temple_name || !temple_about) {
             Toast.show('Please fill all the fields', Toast.LONG);
             return;
@@ -61,7 +63,7 @@ const AddInsideTemple = (props) => {
             const response = await axios.post(`${base_url}/api/add-inside-temple`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    Authorization: `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {

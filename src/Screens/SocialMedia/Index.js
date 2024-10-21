@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Image } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native'
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
@@ -27,6 +28,7 @@ const Index = (props) => {
     };
 
     const handleSubmit = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         const data = {
             temple_yt_url: utubeURL,
             temple_ig_url: instaURL,
@@ -37,7 +39,7 @@ const Index = (props) => {
         try {
             const response = await axios.post(`${base_url}/api/social-media/update`, data, {
                 headers: {
-                    Authorization: `Bearer 1|gOOSULybwMTV74JdEHRbPz7aShtfHMDO6EBU9CBn`,
+                    'Authorization': `Bearer ${access_token}`,
                     'Content-Type': 'application/json',
                 },
             });
@@ -57,19 +59,20 @@ const Index = (props) => {
 
     useEffect(() => {
         const fetchSocialMediaLinks = async () => {
+            var access_token = await AsyncStorage.getItem('storeAccesstoken');
             try {
                 const response = await axios.get(`${base_url}/api/social-media`, {
                     headers: {
-                        Authorization: `Bearer 1|gOOSULybwMTV74JdEHRbPz7aShtfHMDO6EBU9CBn`
+                        'Authorization': `Bearer ${access_token}`
                     }
                 });
                 // console.log("object", response.data.data);
                 // return;
                 if (response.status === 200) {
-                    setUtubeURL(response.data.data.temple_yt_url);
-                    setInstaURL(response.data.data.temple_ig_url);
-                    setFacebookURL(response.data.data.temple_fb_url);
-                    setTwitterURL(response.data.data.temple_x_url);
+                    setUtubeURL(response?.data?.data?.temple_yt_url);
+                    setInstaURL(response?.data?.data?.temple_ig_url);
+                    setFacebookURL(response?.data?.data?.temple_fb_url);
+                    setTwitterURL(response?.data?.data?.temple_x_url);
                 } else {
                     console.error('Error fetching social media links: Unexpected response status', response.status);
                 }
@@ -102,36 +105,36 @@ const Index = (props) => {
                 <View style={{ width: '100%', alignSelf: 'center', flex: 1, marginTop: 10 }}>
                     <View style={styles.cardBox}>
                         <Text style={styles.subHeaderText}>Social Media</Text>
-                        <Text style={[styles.label, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedLabel]}>Youtube URL</Text>
+                        <Text style={[styles.label, (isFocused === 'utubeURL' || utubeURL) && styles.focusedLabel]}>Youtube URL</Text>
                         <TextInput
-                            style={[styles.input, (isFocused === 'utubeURL' || utubeURL !== '') && styles.focusedInput]}
+                            style={[styles.input, (isFocused === 'utubeURL' || utubeURL) && styles.focusedInput]}
                             value={utubeURL}
                             onChangeText={(text) => setUtubeURL(text)}
                             onFocus={() => setIsFocused('utubeURL')}
                             onBlur={() => setIsFocused(null)}
                         />
 
-                        <Text style={[styles.label, (isFocused === 'instaURL' || instaURL !== '') && styles.focusedLabel]}>Instagram URL</Text>
+                        <Text style={[styles.label, (isFocused === 'instaURL' || instaURL) && styles.focusedLabel]}>Instagram URL</Text>
                         <TextInput
-                            style={[styles.input, (isFocused === 'instaURL' || instaURL !== '') && styles.focusedInput]}
+                            style={[styles.input, (isFocused === 'instaURL' || instaURL) && styles.focusedInput]}
                             value={instaURL}
                             onChangeText={(text) => setInstaURL(text)}
                             onFocus={() => setIsFocused('instaURL')}
                             onBlur={() => setIsFocused(null)}
                         />
 
-                        <Text style={[styles.label, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedLabel]}>Facebook URL</Text>
+                        <Text style={[styles.label, (isFocused === 'facebookURL' || facebookURL) && styles.focusedLabel]}>Facebook URL</Text>
                         <TextInput
-                            style={[styles.input, (isFocused === 'facebookURL' || facebookURL !== '') && styles.focusedInput]}
+                            style={[styles.input, (isFocused === 'facebookURL' || facebookURL) && styles.focusedInput]}
                             value={facebookURL}
                             onChangeText={(text) => setFacebookURL(text)}
                             onFocus={() => setIsFocused('facebookURL')}
                             onBlur={() => setIsFocused(null)}
                         />
 
-                        <Text style={[styles.label, (isFocused === 'twitterURL' || twitterURL !== '') && styles.focusedLabel]}>Twitter URL</Text>
+                        <Text style={[styles.label, (isFocused === 'twitterURL' || twitterURL) && styles.focusedLabel]}>Twitter URL</Text>
                         <TextInput
-                            style={[styles.input, (isFocused === 'twitterURL' || twitterURL !== '') && styles.focusedInput]}
+                            style={[styles.input, (isFocused === 'twitterURL' || twitterURL) && styles.focusedInput]}
                             value={twitterURL}
                             onChangeText={(text) => setTwitterURL(text)}
                             onFocus={() => setIsFocused('twitterURL')}

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import NetInfo from "@react-native-community/netinfo";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // SplashScreen
 import SplashScreen from './src/Screens/SplashScreen/Index'
@@ -73,6 +74,18 @@ const App = () => {
   const [access_token, setAccess_token] = useState('');
   const [isConnected, setIsConnected] = useState(true);
 
+  const getAccessToken = async () => {
+    try {
+      const value = await AsyncStorage.getItem('storeAccesstoken')
+      if (value !== null) {
+        setAccess_token(value);
+        console.log("Access Token: ", value);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
       console.log("Connection type", state.type);
@@ -86,6 +99,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    getAccessToken();
     setTimeout(() => {
       setShowSplash(false);
     }, 5000)
@@ -100,10 +114,10 @@ const App = () => {
           <Stack.Screen name="NoInternet" component={NoInternet} />
         ) : (
           <>
-            <Stack.Screen name="Login" component={Login} />
+            {access_token ? <Stack.Screen name="Dashboard" component={Dashboard} /> : <Stack.Screen name="Login" component={Login} />}
+            {!access_token ? <Stack.Screen name="Dashboard" component={Dashboard} /> : <Stack.Screen name="Login" component={Login} />}
             <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="OtpVerify" component={OtpVerify} />
-            <Stack.Screen name="Dashboard" component={Dashboard} />
             <Stack.Screen name="Temple_about" component={Temple_about} />
             <Stack.Screen name="SocialMedia" component={SocialMedia} />
             <Stack.Screen name="Temple_image_video" component={Temple_image_video} />
@@ -138,6 +152,8 @@ const App = () => {
             <Stack.Screen name="Temple_insideTemples" component={Temple_insideTemples} />
             <Stack.Screen name="AddInsideTemple" component={AddInsideTemple} />
             <Stack.Screen name="EditInsideTemple" component={EditInsideTemple} />
+            {/* Temple Inventory */}
+            <Stack.Screen name="Temple_inventory" component={Temple_inventory} />
 
             <Stack.Screen name="Management" component={Management} />
             <Stack.Screen name="Prashad_time" component={Prashad_time} />
@@ -145,7 +161,6 @@ const App = () => {
             <Stack.Screen name="Daily_rituals" component={Daily_rituals} />
             <Stack.Screen name="Darshan_time" component={Darshan_time} />
             <Stack.Screen name="Donation" component={Donation} />
-            <Stack.Screen name="Temple_inventory" component={Temple_inventory} />
             <Stack.Screen name="Temple_vendors" component={Temple_vendors} />
             <Stack.Screen name="Temple_devotees" component={Temple_devotees} />
             <Stack.Screen name="Temple_Finance" component={Temple_Finance} />

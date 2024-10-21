@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native'
@@ -47,6 +48,7 @@ const EditPooja = (props) => {
     };
 
     const submitPooja = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         if (!pooja_name || !price) {
             Toast.show('Please fill all the fields', Toast.LONG);
             return;
@@ -69,7 +71,7 @@ const EditPooja = (props) => {
                 {
                     headers: {
                         'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76`
+                        Authorization: `Bearer ${access_token}`
                     }
                 }
             );

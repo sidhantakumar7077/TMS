@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Modal, FlatList, TouchableHighlight } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { useNavigation, useIsFocused } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
@@ -22,10 +23,11 @@ const Index = (props) => {
     const [festivalList, setFestivalList] = useState([]);
 
     const fetchFestivalList = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.get(`${base_url}/api/manage-festival`, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    'Authorization': `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {
@@ -50,10 +52,11 @@ const Index = (props) => {
     }
 
     const deleteFestival = async (id) => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
         try {
             const response = await axios.delete(`${base_url}/api/delete-festival/${id}`, {
                 headers: {
-                    Authorization: 'Bearer 4|Zbbp4OHk9kdowMDwzTw4L7vcm8JUXQP3g7Hq2VI2360b0f76'
+                    'Authorization': `Bearer ${access_token}`,
                 }
             });
             if (response.status === 200) {
