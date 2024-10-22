@@ -12,6 +12,35 @@ const DrawerModal = ({ visible, onClose }) => {
     const isFocused = useIsFocused();
     const [accessToken, setAccessToken] = useState(null);
 
+    const confirmLogoutModal = () => {
+        Alert.alert(
+            "Logout",
+            "Are you sure you want to logout?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                },
+                { text: "Logout", onPress: () => handleLogout() }
+            ],
+            { cancelable: false }
+        );
+    };
+
+    const handleLogout = async () => {
+        await AsyncStorage.removeItem('storeAccesstoken');
+        navigation.navigate('Login');
+    };
+
+    useEffect(() => {
+        const fetchAccessToken = async () => {
+            var access_token = await AsyncStorage.getItem('storeAccesstoken');
+            setAccessToken(access_token);
+        }
+        fetchAccessToken();
+    }, [isFocused]);
+
     return (
         <View>
             <Modal
@@ -84,17 +113,21 @@ const DrawerModal = ({ visible, onClose }) => {
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Vendors</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Yearly_rituals'); onClose(); }} style={styles.drawerCell}>
+                                <Feather name="grid" color={'#fff'} size={22} />
+                                <Text style={styles.drawerLable}>Temple Ritual</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Management'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Trust</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_committee'); onClose(); }} style={styles.drawerCell}>
+                                <Feather name="grid" color={'#fff'} size={22} />
+                                <Text style={styles.drawerLable}>Temple Committee</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Prashad_time'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Prasad</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { navigation.navigate('Yearly_rituals'); onClose(); }} style={styles.drawerCell}>
-                                <Feather name="grid" color={'#fff'} size={22} />
-                                <Text style={styles.drawerLable}>Temple Ritual</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Darshan_time'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />
@@ -110,12 +143,12 @@ const DrawerModal = ({ visible, onClose }) => {
                             </TouchableOpacity>
 
                             {accessToken ?
-                                <TouchableOpacity style={styles.drawerCell}>
+                                <TouchableOpacity onPress={confirmLogoutModal} style={[styles.drawerCell, { paddingBottom: 10 }]}>
                                     <MaterialCommunityIcons name="logout" color={'#fff'} size={25} />
                                     <Text style={styles.drawerLable}>Logout</Text>
                                 </TouchableOpacity>
                                 :
-                                <TouchableOpacity style={styles.drawerCell}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={[styles.drawerCell, { paddingBottom: 10 }]}>
                                     <MaterialCommunityIcons name="login" color={'#fff'} size={25} />
                                     <Text style={styles.drawerLable}>Login</Text>
                                 </TouchableOpacity>

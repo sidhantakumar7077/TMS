@@ -72,6 +72,7 @@ import EditVendor from './src/Screens/Temple_vendors/EditVendors'
 import ViewVendor from './src/Screens/Temple_vendors/ViewVendors'
 
 import Management from './src/Screens/Management/Index'
+import Temple_committee from './src/Screens/Temple_committee/Index'
 import Prashad_time from './src/Screens/Prashad_time/Index'
 import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
 import Daily_rituals from './src/Screens/Daily_rituals/Index'
@@ -185,11 +186,13 @@ const App = () => {
             <Stack.Screen name="AddVendor" component={AddVendor} />
             <Stack.Screen name="EditVendor" component={EditVendor} />
             <Stack.Screen name="ViewVendor" component={ViewVendor} />
-
-            <Stack.Screen name="Management" component={Management} />
-            <Stack.Screen name="Prashad_time" component={Prashad_time} />
+            {/* Temple Rituals */}
             <Stack.Screen name="Yearly_rituals" component={Yearly_rituals} />
             <Stack.Screen name="Daily_rituals" component={Daily_rituals} />
+
+            <Stack.Screen name="Management" component={Management} />
+            <Stack.Screen name="Temple_committee" component={Temple_committee} />
+            <Stack.Screen name="Prashad_time" component={Prashad_time} />
             <Stack.Screen name="Darshan_time" component={Darshan_time} />
             <Stack.Screen name="Donation" component={Donation} />
             <Stack.Screen name="Temple_Finance" component={Temple_Finance} />

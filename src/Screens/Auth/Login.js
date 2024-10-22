@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Dimensions, ActivityIndicator, BackHandler, ToastAndroid } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Swiper from 'react-native-swiper';
@@ -75,6 +75,27 @@ const Login = (props) => {
             setIsLoading(false);
         }
     }
+
+    const [backPressCount, setBackPressCount] = useState(0);
+    
+    useEffect(() => {
+        const handleBackPress = () => {
+            if (backPressCount === 1) {
+                BackHandler.exitApp(); // Exit the app if back button is pressed twice within 2 seconds
+                return true;
+            }
+            ToastAndroid.show('Press back again to exit', ToastAndroid.SHORT);
+            setBackPressCount(1);
+            const timeout = setTimeout(() => {
+                setBackPressCount(0);
+            }, 2000); // Reset back press count after 2 seconds
+            return true; // Prevent default behavior
+        };
+        if (isFocused) {
+            const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+            return () => backHandler.remove(); // Cleanup the event listener when the component unmounts or navigates away
+        }
+    }, [backPressCount, isFocused]);
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
