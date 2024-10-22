@@ -60,6 +60,16 @@ import ViewInventory from './src/Screens/Temple_inventory/ViewInventory'
 import Inventory_category from './src/Screens/Temple_inventory/Inventory_category'
 import AddInventory_category from './src/Screens/Temple_inventory/AddInventory_category'
 import EditInventory_category from './src/Screens/Temple_inventory/EditInventory_category'
+// Temple Devotee
+import Temple_devotees from './src/Screens/Temple_devotees/Index'
+import AddDevotee from './src/Screens/Temple_devotees/AddDevotee';
+import EditDevotee from './src/Screens/Temple_devotees/EditDevotee';
+import ViewDevotee from './src/Screens/Temple_devotees/ViewDevotee';
+// Temple Vendor
+import Temple_vendors from './src/Screens/Temple_vendors/Index'
+import AddVendor from './src/Screens/Temple_vendors/AddVendors'
+import EditVendor from './src/Screens/Temple_vendors/EditVendors'
+import ViewVendor from './src/Screens/Temple_vendors/ViewVendors'
 
 import Management from './src/Screens/Management/Index'
 import Prashad_time from './src/Screens/Prashad_time/Index'
@@ -67,8 +77,6 @@ import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
 import Daily_rituals from './src/Screens/Daily_rituals/Index'
 import Darshan_time from './src/Screens/Darshan_time/Index'
 import Donation from './src/Screens/Donation/Index'
-import Temple_vendors from './src/Screens/Temple_vendors/Index'
-import Temple_devotees from './src/Screens/Temple_devotees/Index'
 import Temple_Finance from './src/Screens/Temple_Finance/Index'
 
 const Stack = createNativeStackNavigator()
@@ -167,6 +175,16 @@ const App = () => {
             <Stack.Screen name="Inventory_category" component={Inventory_category} />
             <Stack.Screen name="AddInventory_category" component={AddInventory_category} />
             <Stack.Screen name="EditInventory_category" component={EditInventory_category} />
+            {/* Temple Devotee */}
+            <Stack.Screen name="Temple_devotees" component={Temple_devotees} />
+            <Stack.Screen name="AddDevotee" component={AddDevotee} />
+            <Stack.Screen name="EditDevotee" component={EditDevotee} />
+            <Stack.Screen name="ViewDevotee" component={ViewDevotee} />
+            {/* Temple Vendors */}
+            <Stack.Screen name="Temple_vendors" component={Temple_vendors} />
+            <Stack.Screen name="AddVendor" component={AddVendor} />
+            <Stack.Screen name="EditVendor" component={EditVendor} />
+            <Stack.Screen name="ViewVendor" component={ViewVendor} />
 
             <Stack.Screen name="Management" component={Management} />
             <Stack.Screen name="Prashad_time" component={Prashad_time} />
@@ -174,8 +192,6 @@ const App = () => {
             <Stack.Screen name="Daily_rituals" component={Daily_rituals} />
             <Stack.Screen name="Darshan_time" component={Darshan_time} />
             <Stack.Screen name="Donation" component={Donation} />
-            <Stack.Screen name="Temple_vendors" component={Temple_vendors} />
-            <Stack.Screen name="Temple_devotees" component={Temple_devotees} />
             <Stack.Screen name="Temple_Finance" component={Temple_Finance} />
           </>
         )}

@@ -80,6 +80,10 @@ const DrawerModal = ({ visible, onClose }) => {
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Devotees</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_vendors'); onClose(); }} style={styles.drawerCell}>
+                                <Feather name="grid" color={'#fff'} size={22} />
+                                <Text style={styles.drawerLable}>Temple Vendors</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Management'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Trust</Text>
@@ -99,10 +103,6 @@ const DrawerModal = ({ visible, onClose }) => {
                             <TouchableOpacity onPress={() => { navigation.navigate('Donation'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Donation</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_vendors'); onClose(); }} style={styles.drawerCell}>
-                                <Feather name="grid" color={'#fff'} size={22} />
-                                <Text style={styles.drawerLable}>Temple Vendors</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { navigation.navigate('Temple_Finance'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />

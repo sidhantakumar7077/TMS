@@ -1,57 +1,80 @@
-import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableHighlight, TouchableOpacity, Modal, FlatList, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { launchImageLibrary } from 'react-native-image-picker';
-import DatePicker from 'react-native-date-picker'
-import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DrawerModal from '../../Component/DrawerModal';
 import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import moment from 'moment';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const Index = (props) => {
 
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const [isModalVisible, setModalVisible] = useState(false);
   const openModal = () => { setModalVisible(true) };
   const closeModal = () => { setModalVisible(false) };
+  const [devoteesList, setDevoteesList] = useState([]);
 
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [dob, setDob] = useState(null);
-  const [dateOpen, setDateOpen] = useState(false);
-  const [gotra, setGotra] = useState('');
-  const [rashi, setRashi] = useState('');
-  const [address, setAddress] = useState('');
-  const [isFocused, setIsFocused] = useState(null);
-
-  const [photoSource, setPhotoSource] = useState(null);
-  const [photo, setPhoto] = useState('Select Image');
-  // Handle document upload using react-native-image-picker
-  const selectTrustImage = async () => {
-    // var access_token = await AsyncStorage.getItem('storeAccesstoken');
-    const options = {
-      title: 'Select Image',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
+  const fetchDevoteesList = async () => {
+    var access_token = await AsyncStorage.getItem('storeAccesstoken');
+    try {
+      const response = await axios.get(`${base_url}/api/manage-devotees`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        }
+      });
+      if (response.status === 200) {
+        setDevoteesList(response.data.data);
       } else {
-        const source = response.assets[0]
-        setPhotoSource(source);
-        setPhoto(response.assets[0].fileName);
-        // console.log("selected image-=-=", response.assets[0])
+        Toast.show('Failed to fetch devotees list', Toast.LONG);
       }
-    });
+    } catch (error) {
+      Toast.show('Failed to fetch devotees list', Toast.LONG);
+    }
   };
+
+  const [isDevoteesDeleteModal, setIsDevoteesDeleteModal] = useState(false);
+  const openDevoteesDeleteModal = () => { setIsDevoteesDeleteModal(true) };
+  const closeDevoteesDeleteModal = () => { setIsDevoteesDeleteModal(false) };
+  const [selectedDevoteesId, setSelectedDevoteesId] = useState(null);
+
+  const showDevoteesDeleteModal = (id) => {
+    setSelectedDevoteesId(id);
+    openDevoteesDeleteModal();
+  };
+
+  const deleteDevotees = async (id) => {
+    var access_token = await AsyncStorage.getItem('storeAccesstoken');
+    try {
+      const response = await axios.delete(`${base_url}/api/delete-devotees/${id}`, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        }
+      });
+      if (response.status === 200) {
+        fetchDevoteesList();
+        closeDevoteesDeleteModal();
+        Toast.show('Devotee deleted successfully', Toast.LONG);
+      } else {
+        Toast.show('Failed to delete devotee', Toast.LONG);
+      }
+    } catch (error) {
+      Toast.show('Failed to delete devotee', Toast.LONG);
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchDevoteesList();
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>
@@ -67,113 +90,117 @@ const Index = (props) => {
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView style={{ flex: 1 }}>
-        <View style={styles.topBanner}>
-          <Image
-            style={{ width: '100%', height: '100%', resizeMode: 'cover', borderRadius: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 5, elevation: 3, }}
-            source={{ uri: 'https://images.fineartamerica.com/images/artworkimages/medium/3/jagannath-temple-in-puri-heritage.jpg' }}
-          />
-        </View>
-        <View style={styles.cardBox}>
-          {/* Name Input */}
-          <Text style={[styles.label, (isFocused === 'name' || name !== '') && styles.focusedLabel, { marginTop: 18 }]}>Name</Text>
-          <TextInput
-            style={[styles.input, (isFocused === 'name' || name !== '') && styles.focusedInput]}
-            value={name}
-            onChangeText={(text) => setName(text)}
-            onFocus={() => setIsFocused('name')}
-            onBlur={() => setIsFocused(null)}
-          />
-
-          {/* Phone Number Input */}
-          <Text style={[styles.label, (isFocused === 'phone' || phone !== '') && styles.focusedLabel, { marginTop: 18 }]}>Phone Number</Text>
-          <TextInput
-            style={[styles.input, (isFocused === 'phone' || phone !== '') && styles.focusedInput]}
-            value={phone}
-            onChangeText={(text) => setPhone(text)}
-            onFocus={() => setIsFocused('phone')}
-            onBlur={() => setIsFocused(null)}
-            keyboardType='number-pad'
-            maxLength={10}
-          />
-
-          {/* DOB */}
-          <Text style={[styles.label, (dob !== null) && styles.focusedLabel]}>DOB</Text>
-          <TouchableOpacity onPress={() => setDateOpen(true)} style={[styles.datePickerStyle, (dob !== null) && { marginTop: 14 }]}>
-            <Text style={{ color: '#000', width: '90%' }}>{dob ? moment(dob).format("DD/MM/YYYY") : null}</Text>
-            <Fontisto name="date" size={dob !== null ? 22 : 19} color={dob !== null ? '#56ab2f' : "#161c19"} />
-          </TouchableOpacity>
-          <View style={{ backgroundColor: dob !== null ? '#56ab2f' : '#757473', width: '100%', height: dob !== null ? 2 : 0.7, marginBottom: 30 }} />
-          <View>
-            <DatePicker
-              modal
-              mode="date"
-              open={dateOpen}
-              date={dob || new Date()}
-              onConfirm={(data) => {
-                setDateOpen(false)
-                setDob(data)
-              }}
-              onCancel={() => {
-                setDateOpen(false);
-              }}
-            />
-          </View>
-
-          {/* Upload Photo */}
-          <Text style={[styles.label, (photo !== 'Select Image') && styles.focusedLabel]}>Upload Image</Text>
-          <TouchableOpacity style={[styles.filePicker, { marginTop: 10 }]} onPress={selectTrustImage}>
-            <TextInput
-              style={styles.filePickerText}
-              editable={false}
-              placeholder={photo}
-              placeholderTextColor={'#000'}
-            />
-            <View style={styles.chooseBtn}>
-              <Text style={styles.chooseBtnText}>Choose File</Text>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
+        <View style={styles.addDevotees}>
+          <TouchableOpacity onPress={() => props.navigation.navigate('AddDevotee')} style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
+            <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center' }}>
+              <FontAwesome6 name="plus" color={'#ffcb44'} size={22} />
+              <Text style={{ color: '#ffcb44', fontSize: 16, fontWeight: '500', marginLeft: 10 }}> Add a new Devotees</Text>
             </View>
           </TouchableOpacity>
-
-          {/* Gotra Input */}
-          <Text style={[styles.label, (isFocused === 'gotra' || gotra !== '') && styles.focusedLabel, { marginTop: 18 }]}>Gotra</Text>
-          <TextInput
-            style={[styles.input, (isFocused === 'gotra' || gotra !== '') && styles.focusedInput]}
-            value={gotra}
-            onChangeText={(text) => setGotra(text)}
-            onFocus={() => setIsFocused('gotra')}
-            onBlur={() => setIsFocused(null)}
-          />
-
-          {/* Rashi Input */}
-          <Text style={[styles.label, (isFocused === 'rashi' || rashi !== '') && styles.focusedLabel, { marginTop: 18 }]}>Rashi</Text>
-          <TextInput
-            style={[styles.input, (isFocused === 'rashi' || rashi !== '') && styles.focusedInput]}
-            value={rashi}
-            onChangeText={(text) => setRashi(text)}
-            onFocus={() => setIsFocused('rashi')}
-            onBlur={() => setIsFocused(null)}
-          />
-
-          {/* Address Input */}
-          <Text style={[styles.label, (isFocused === 'address' || address !== '') && styles.focusedLabel, { marginTop: 18 }]}>Address</Text>
-          <TextInput
-            style={[styles.input, (isFocused === 'address' || address !== '') && styles.focusedInput]}
-            value={address}
-            onChangeText={(text) => setAddress(text)}
-            onFocus={() => setIsFocused('address')}
-            onBlur={() => setIsFocused(null)}
-          />
         </View>
-        {/* Submit Button */}
-        <TouchableOpacity onPress={() => props.navigation.navigate('Temple_Finance')}>
-          <LinearGradient
-            colors={['#c9170a', '#f0837f']}
-            style={styles.submitButton}
-          >
-            <Text style={styles.submitText}>Submit</Text>
-          </LinearGradient>
-        </TouchableOpacity>
+        <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 20 }}>
+          <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 90, alignSelf: 'center', marginVertical: 10 }}></View>
+          <Text style={{ color: '#7a7979', fontSize: 14, fontWeight: '500', letterSpacing: 2 }}>SAVED DEVOTEES</Text>
+          <View style={{ backgroundColor: '#7a7979', height: 0.4, width: 90, alignSelf: 'center', marginVertical: 10 }}></View>
+        </View>
+        <View style={{ flex: 1 }}>
+          {devoteesList?.length > 0 ?
+            <FlatList
+              data={devoteesList}
+              keyExtractor={(item) => item.id}
+              scrollEnabled={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => navigation.navigate('ViewDevotee', item)} style={styles.devoteesBox}>
+                  <View style={{ width: '20%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 5, height: 60 }}>
+                    <Image source={{ uri: item?.photo }} style={{ width: '100%', height: '100%', borderRadius: 5 }} />
+                  </View>
+                  <View style={{ width: '5%' }}></View>
+                  <View style={{ width: '65%', alignItems: 'flex-start', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item?.name}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item?.phone_number}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item?.dob}</Text>
+                  </View>
+                  <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
+                    <TouchableOpacity onPress={() => props.navigation.navigate('EditDevotee', item)} style={{ backgroundColor: '#fff' }}>
+                      <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => showDevoteesDeleteModal(item.id)} style={{ backgroundColor: '#fff' }}>
+                      <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+            : <Text style={{ textAlign: 'center', top: 200, color: '#000', fontSize: 18 }}>No Devotees available!</Text>
+          }
+        </View>
       </ScrollView>
+      <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
+          <View style={{ padding: 0, width: '25%' }}>
+            <View activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+              <View style={{ alignItems: 'center' }}>
+                <Octicons name="home" color={'#dc3545'} size={21} />
+                <Text style={{ color: '#dc3545', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{ padding: 0, width: '25%' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+              <View style={{ alignItems: 'center' }}>
+                <MaterialCommunityIcons name="finance" color={'#000'} size={23} />
+                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Finance</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+          <View style={{ padding: 0, width: '25%' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+              <View style={{ alignItems: 'center' }}>
+                <MaterialIcons name="work-history" color={'#000'} size={22} />
+                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Booking</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+          <View style={{ padding: 0, width: '25%' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+              <View style={{ alignItems: 'center', marginTop: 3 }}>
+                <Fontisto name="date" color={'#000'} size={20} />
+                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Panji</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </View>
+
+      {/* Start Devotees Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isDevoteesDeleteModal}
+        onRequestClose={closeDevoteesDeleteModal}
+      >
+        <View style={styles.deleteModalOverlay}>
+          <View style={styles.deleteModalContainer}>
+            <View style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}>
+              <View style={{ alignItems: 'center' }}>
+                <MaterialIcons name="report-gmailerrorred" size={100} color="red" />
+                <Text style={{ color: '#000', fontSize: 23, fontWeight: 'bold', textAlign: 'center', letterSpacing: 0.3 }}>Are You Sure To Delete This Devotees?</Text>
+                <Text style={{ color: 'gray', fontSize: 17, fontWeight: '500', marginTop: 4 }}>You won't be able to revert this!</Text>
+              </View>
+            </View>
+            <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', marginTop: 10 }}>
+              <TouchableOpacity onPress={closeDevoteesDeleteModal} style={styles.cancelDeleteBtn}>
+                <Text style={styles.btnText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => deleteDevotees(selectedDevoteesId)} style={styles.confirmDeleteBtn}>
+                <Text style={styles.btnText}>Yes, delete it!</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+      {/* End Devotees Modal */}
     </View>
   )
 }
@@ -184,19 +211,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4f4f4',
-  },
-  topBanner: {
-    width: '93%',
-    alignSelf: 'center',
-    height: 150,
-    backgroundColor: 'red',
-    borderRadius: 10,
-    marginTop: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
   },
   headerPart: {
     width: '100%',
@@ -220,104 +234,66 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     // marginLeft: 5,
   },
-  cardBox: {
-    width: '93%',
-    alignSelf: 'center',
+  addDevotees: {
     backgroundColor: '#fff',
-    padding: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
-    marginVertical: 10,
-    borderRadius: 10
-  },
-  label: {
-    color: '#757473',
-    fontSize: 16,
-  },
-  focusedLabel: {
-    color: '#56ab2f',
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  input: {
-    height: 25,
-    borderBottomWidth: 0.7,
-    borderBottomColor: '#757473',
-    marginBottom: 30,
-    color: '#000',
-  },
-  dropdown: {
-    borderWidth: 0,
-    borderBottomWidth: 0.7,
-    borderColor: '#757473',
-    paddingHorizontal: 0,
-    marginBottom: 30,
-  },
-  dropdownContainer: {
-    borderWidth: 0.7,
-    borderColor: '#757473',
-    paddingHorizontal: 0,
-    width: '102.5%',
-    alignSelf: 'center'
-  },
-  focusedInput: {
-    height: 50,
-    borderBottomColor: '#56ab2f',
-    borderBottomWidth: 2
-  },
-  submitButton: {
-    width: '90%',
+    marginTop: 15,
+    width: '95%',
     alignSelf: 'center',
-    borderRadius: 12,
-    paddingVertical: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    elevation: 3,
-    marginVertical: 10,
-  },
-  submitText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-    letterSpacing: 1,  // Spacing for the button text
-  },
-  filePicker: {
-    borderColor: '#ddd',
-    borderWidth: 1,
+    padding: 10,
     borderRadius: 10,
-    paddingLeft: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 13,
+    elevation: 5,
+  },
+  devoteesBox: {
+    width: '95%',
+    alignSelf: 'center',
+    padding: 12,
+    backgroundColor: '#fff',
+    marginTop: 10,
+    borderRadius: 10,
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 13,
+    elevation: 5,
   },
-  filePickerText: {
-    width: '70%',
-    height: 45,
-    lineHeight: 45,
-    color: '#000',
-  },
-  chooseBtn: {
-    backgroundColor: '#bbb',
-    width: '30%',
-    alignItems: 'center',
+  deleteModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    height: 45,
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
+    alignItems: 'center',
   },
-  chooseBtnText: {
+  deleteModalContainer: {
+    width: '90%',
+    backgroundColor: '#fff',
+    borderRadius: 15, // Slightly more rounded corners
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 }, // More pronounced shadow
+    shadowOpacity: 0.3,
+    shadowRadius: 20,
+    elevation: 10,
+    padding: 20,
+  },
+  cancelDeleteBtn: {
+    backgroundColor: 'red',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 7
+  },
+  btnText: {
     color: '#fff',
-    fontWeight: '500',
+    fontSize: 16,
+    fontWeight: '600'
   },
-  datePickerStyle: {
-    width: '100%',
-    marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
-  }
+  confirmDeleteBtn: {
+    backgroundColor: 'green',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 7
+  },
 })

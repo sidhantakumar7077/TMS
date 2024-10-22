@@ -209,7 +209,7 @@ const Index = (props) => {
                                 {templeImages.length > 0 ? (
                                     templeImages.map((image, index) => (
                                         <View key={index} style={styles.imageWrapper}>
-                                            <Image source={{ uri: `${base_url}${image.uri}` }} style={styles.imagePreview} />
+                                            <Image source={{ uri: image.uri }} style={styles.imagePreview} />
                                             {/* Cross icon to remove the image */}
                                             <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
                                                 <Icon name="cancel" size={24} color="red" />
@@ -242,7 +242,7 @@ const Index = (props) => {
                                     templeVideos.map((video, index) => (
                                         <View key={index} style={styles.videoWrapper}>
                                             <Video
-                                                source={{ uri: `${base_url}${video.uri}` }}
+                                                source={{ uri: video.uri }}
                                                 style={styles.videoPreview}
                                                 paused={pausedVideos[index]} // Control play/pause based on state
                                                 resizeMode="cover"
