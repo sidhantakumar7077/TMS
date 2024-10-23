@@ -113,7 +113,7 @@ const DrawerModal = ({ visible, onClose }) => {
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Vendors</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { navigation.navigate('Yearly_rituals'); onClose(); }} style={styles.drawerCell}>
+                            <TouchableOpacity onPress={() => { navigation.navigate('Temple_rituals'); onClose(); }} style={styles.drawerCell}>
                                 <Feather name="grid" color={'#fff'} size={22} />
                                 <Text style={styles.drawerLable}>Temple Ritual</Text>
                             </TouchableOpacity>

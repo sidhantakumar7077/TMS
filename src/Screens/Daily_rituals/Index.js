@@ -84,8 +84,6 @@ const Index = (props) => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.headerText}>Daily Rituals</Text>
-
       {daysOfWeek.map((day, index) => (
         <Collapse key={index} isExpanded={activeIndex === index} onToggle={() => setActiveIndex(activeIndex === index ? null : index)}>
 
@@ -224,7 +222,7 @@ const Index = (props) => {
               <TouchableOpacity style={styles.addButton}>
                 <Entypo name="plus" size={30} color={'#fff'} />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => props.navigation.navigate('Darshan_time')} style={styles.submitButton}>
+              <TouchableOpacity style={styles.submitButton}>
                 <Text style={styles.submitButtonText}>Submit</Text>
               </TouchableOpacity>
             </View>
@@ -241,6 +239,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f4f4f4',
+    paddingTop: 15
   },
   headerText: {
     fontSize: 28,

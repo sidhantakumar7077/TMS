@@ -70,12 +70,17 @@ import Temple_vendors from './src/Screens/Temple_vendors/Index'
 import AddVendor from './src/Screens/Temple_vendors/AddVendors'
 import EditVendor from './src/Screens/Temple_vendors/EditVendors'
 import ViewVendor from './src/Screens/Temple_vendors/ViewVendors'
+// Temple Rituals
+import Temple_rituals from './src/Screens/Temple_rituals/Index'
+import Daily_rituals from './src/Screens/Daily_rituals/Index'
+import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
+import AddRitual from './src/Screens/Yearly_rituals/AddRitual'
+import EditRitual from './src/Screens/Yearly_rituals/EditRitual'
+import ViewRitual from './src/Screens/Yearly_rituals/ViewRitual'
 
 import Management from './src/Screens/Management/Index'
 import Temple_committee from './src/Screens/Temple_committee/Index'
 import Prashad_time from './src/Screens/Prashad_time/Index'
-import Yearly_rituals from './src/Screens/Yearly_rituals/Index'
-import Daily_rituals from './src/Screens/Daily_rituals/Index'
 import Darshan_time from './src/Screens/Darshan_time/Index'
 import Donation from './src/Screens/Donation/Index'
 import Temple_Finance from './src/Screens/Temple_Finance/Index'
@@ -187,8 +192,12 @@ const App = () => {
             <Stack.Screen name="EditVendor" component={EditVendor} />
             <Stack.Screen name="ViewVendor" component={ViewVendor} />
             {/* Temple Rituals */}
-            <Stack.Screen name="Yearly_rituals" component={Yearly_rituals} />
+            <Stack.Screen name="Temple_rituals" component={Temple_rituals} />
             <Stack.Screen name="Daily_rituals" component={Daily_rituals} />
+            <Stack.Screen name="Yearly_rituals" component={Yearly_rituals} />
+            <Stack.Screen name="AddRitual" component={AddRitual} />
+            <Stack.Screen name="EditRitual" component={EditRitual} />
+            <Stack.Screen name="ViewRitual" component={ViewRitual} />
 
             <Stack.Screen name="Management" component={Management} />
             <Stack.Screen name="Temple_committee" component={Temple_committee} />
