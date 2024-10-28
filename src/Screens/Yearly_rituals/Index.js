@@ -1,7 +1,14 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image } from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import Entypo from 'react-native-vector-icons/Entypo';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
 
 const Index = (props) => {
 
@@ -9,11 +16,65 @@ const Index = (props) => {
     const isFocused = useIsFocused();
     const [ritualList, setRitualList] = useState([]);
 
+    const fetchYearlyRitualList = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        try {
+            const response = await axios.get(`${base_url}/api/manage-special-rituals`, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                }
+            });
+            if (response.status === 200) {
+                setRitualList(response.data.data);
+            } else {
+                Toast.show('Failed to fetch vendors list', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to fetch vendors list', Toast.LONG);
+        }
+    };
+
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const openDeleteModal = () => setDeleteModalVisible(true);
+    const closeDeleteModal = () => setDeleteModalVisible(false);
+    const [selectedRitualId, setSelectedRitualId] = useState('');
+
+    const showRitualDeleteModal = (id) => {
+        setSelectedRitualId(id);
+        openDeleteModal();
+    };
+
+    const deleteRitual = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        try {
+            const response = await axios.delete(`${base_url}/api/delet-special-rituals/${selectedRitualId}`, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                }
+            });
+            if (response.status === 200) {
+                Toast.show('Ritual deleted successfully', Toast.LONG);
+                closeDeleteModal();
+                fetchYearlyRitualList();
+            } else {
+                Toast.show('Failed to delete the ritual', Toast.LONG);
+            }
+        } catch (error) {
+            Toast.show('Failed to delete the ritual', Toast.LONG);
+        }
+    };
+
+    useEffect(() => {
+        if (isFocused) {
+            fetchYearlyRitualList();
+        }
+    }, [isFocused]);
+
     return (
         <View style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1, marginBottom: 10 }}>
                 <View style={styles.addRitual}>
-                    <TouchableOpacity onPress={()=> navigation.navigate('AddRitual')} style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('AddRitual')} style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingVertical: 3 }}>
                         <View style={{ width: '70%', flexDirection: 'row', alignItems: 'center' }}>
                             <FontAwesome6 name="plus" color={'#ffcb44'} size={22} />
                             <Text style={{ color: '#ffcb44', fontSize: 16, fontWeight: '500', marginLeft: 10 }}> Add a new Ritual</Text>
@@ -32,21 +93,21 @@ const Index = (props) => {
                             keyExtractor={(item) => item.id}
                             scrollEnabled={false}
                             renderItem={({ item }) => (
-                                <TouchableOpacity onPress={() => navigation.navigate('ViewVendor', item)} style={styles.ritualBox}>
+                                <TouchableOpacity onPress={() => navigation.navigate('ViewRitual', item)} style={styles.ritualBox}>
                                     <View style={{ width: '15%', alignItems: 'center', justifyContent: 'center', backgroundColor: '#d9d5d2', borderRadius: 50, height: 55 }}>
                                         <Entypo name="user" color={'#000'} size={30} />
                                     </View>
                                     <View style={{ width: '5%' }}></View>
                                     <View style={{ width: '70%', alignItems: 'flex-start', justifyContent: 'center' }}>
-                                        <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item?.vendor_name}</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item?.phone_no}</Text>
-                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item?.email_id}</Text>
+                                        <Text style={{ fontSize: 16, fontWeight: '700', color: '#545353', letterSpacing: 0.6 }}>{item?.spcl_ritual_name}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item?.spcl_ritual_date} {item?.spcl_ritual_time}</Text>
+                                        <Text style={{ fontSize: 14, fontWeight: '500', color: '#666565', letterSpacing: 0.6 }}>{item?.description}</Text>
                                     </View>
                                     <View style={{ width: '10%', alignItems: 'flex-end', paddingRight: 5, flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                                        <TouchableOpacity onPress={() => props.navigation.navigate('EditVendor', item)} style={{ backgroundColor: '#fff' }}>
+                                        <TouchableOpacity onPress={() => navigation.navigate('EditRitual', item)} style={{ backgroundColor: '#fff' }}>
                                             <MaterialCommunityIcons name="circle-edit-outline" color={'#ffcb44'} size={25} />
                                         </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => showVendorsDeleteModal(item.id)} style={{ backgroundColor: '#fff' }}>
+                                        <TouchableOpacity onPress={() => showRitualDeleteModal(item.id)} style={{ backgroundColor: '#fff' }}>
                                             <MaterialCommunityIcons name="delete-circle-outline" color={'#ffcb44'} size={26} />
                                         </TouchableOpacity>
                                     </View>
@@ -57,6 +118,35 @@ const Index = (props) => {
                     }
                 </View>
             </ScrollView>
+
+            {/* Start Delete Area Modal */}
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={deleteModalVisible}
+                onRequestClose={closeDeleteModal}
+            >
+                <View style={styles.deleteModalOverlay}>
+                    <View style={styles.deleteModalContainer}>
+                        <View style={{ width: '90%', alignSelf: 'center', marginBottom: 10 }}>
+                            <View style={{ alignItems: 'center' }}>
+                                <MaterialIcons name="report-gmailerrorred" size={100} color="red" />
+                                <Text style={{ color: '#000', fontSize: 23, fontWeight: 'bold', textAlign: 'center', letterSpacing: 0.3 }}>Are You Sure To Delete This Ritual?</Text>
+                                <Text style={{ color: 'gray', fontSize: 17, fontWeight: '500', marginTop: 4 }}>You won't be able to revert this!</Text>
+                            </View>
+                        </View>
+                        <View style={{ width: '95%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', marginTop: 10 }}>
+                            <TouchableOpacity onPress={closeDeleteModal} style={styles.cancelDeleteBtn}>
+                                <Text style={styles.btnText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => deleteRitual(selectedRitualId)} style={styles.confirmDeleteBtn}>
+                                <Text style={styles.btnText}>Yes, delete it!</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+            {/* End Delete Area Modal */}
         </View>
     );
 };

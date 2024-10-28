@@ -1,14 +1,17 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
 import React, { useState } from 'react';
 import DatePicker from 'react-native-date-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import LinearGradient from 'react-native-linear-gradient';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Video from 'react-native-video';
-import DrawerModal from '../../Component/DrawerModal';
-import { useNavigation, useIsFocused } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import Octicons from 'react-native-vector-icons/Octicons';
+import { base_url } from '../../../App';
+import axios from 'axios';
+import Toast from 'react-native-simple-toast';
+import moment from 'moment';
 
 const AddRitual = (props) => {
 
@@ -22,25 +25,19 @@ const AddRitual = (props) => {
     const [ritualTime, setRitualTime] = useState(null);
     const [openTimePicker, setOpenTimePicker] = useState(false);
 
-    const [templeImages, setTempleImages] = useState([]); // Array to store selected images
-    const [templeImageCount, setTempleImageCount] = useState('Select Images');
-    const [templeVideos, setTempleVideos] = useState([]); // Array to store selected videos
-    const [templeVideoCount, setTempleVideoCount] = useState('Select Videos');
-    const [pausedVideos, setPausedVideos] = useState([]); // Array to track paused videos
+    const [templeImageSource, setTempleImageSource] = useState(null);
+    const [templeImage, setTempleImage] = useState('Select Images');
+    const [templeVideoSource, setTempleVideoSource] = useState(null);
+    const [templeVideo, setTempleVideo] = useState('Select Videos');
+    const [videoPaused, setVideoPaused] = useState(true);
 
-    // Handle image selection using react-native-image-picker
-    const selectTempleImages = async () => {
-        const options = {
-            title: 'Select Images',
-            selectionLimit: 0, // Allows multiple image selection
+    const selectImage = () => {
+        let options = {
             mediaType: 'photo',
             includeBase64: false,
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
+            maxHeight: 200,
+            maxWidth: 200,
         };
-
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled image picker');
@@ -48,59 +45,73 @@ const AddRitual = (props) => {
                 console.log('ImagePicker Error: ', response.error);
             } else {
                 const selectedImages = response.assets;
-                setTempleImages([...templeImages, ...selectedImages]); // Add new images to the array
-                setTempleImageCount(`Select ${templeImages.length + selectedImages.length} Images`);
+                setTempleImage(selectedImages[0].fileName);
+                // console.log("object", selectedImages);
+                setTempleImageSource(selectedImages[0]);
             }
         });
     };
 
-    // Handle video selection using react-native-image-picker
-    const selectTempleVideos = async () => {
-        const options = {
-            title: 'Select Videos',
-            selectionLimit: 0, // Allows multiple video selection
-            mediaType: 'video', // Restrict to video selection
+    const selectTempleVideos = () => {
+        let options = {
+            mediaType: 'video',
             includeBase64: false,
-            storageOptions: {
-                skipBackup: true,
-                path: 'videos',
-            },
+            maxHeight: 200,
+            maxWidth: 200,
         };
-
         launchImageLibrary(options, (response) => {
             if (response.didCancel) {
                 console.log('User cancelled video picker');
             } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
+                console.log('VideoPicker Error: ', response.error);
             } else {
                 const selectedVideos = response.assets;
-                setTempleVideos([...templeVideos, ...selectedVideos]); // Add new videos to the array
-                setTempleVideoCount(`Select ${templeVideos.length + selectedVideos.length} Videos`);
-                setPausedVideos([...pausedVideos, ...selectedVideos.map(() => true)]); // Initialize paused state for each video
+                setTempleVideo(selectedVideos[0].fileName);
+                setTempleVideoSource(selectedVideos[0]);
             }
         });
     };
 
-    // Toggle play/pause state for a video by index
-    const togglePlayPause = (index) => {
-        const updatedPausedVideos = pausedVideos.map((paused, i) => (i === index ? !paused : paused));
-        setPausedVideos(updatedPausedVideos);
-    };
+    const submitRitual = async () => {
+        var access_token = await AsyncStorage.getItem('storeAccesstoken');
+        if (ritual_name === '' || ritual_tithi === '' || ritual_desc === '' || ritualDate === null || ritualTime === null) {
+            Toast.show('All fields are required', Toast.LONG);
+            return;
+        }
+        const formData = new FormData();
+        formData.append('spcl_ritual_name', ritual_name);
+        formData.append('spcl_ritual_tithi', ritual_tithi);
+        formData.append('description', ritual_desc);
+        formData.append('spcl_ritual_date', moment(ritualDate).format('YYYY-MM-DD'));
+        formData.append('spcl_ritual_time', moment(ritualTime).format('h:mm a'));
+        formData.append('spcl_ritual_image', {
+            uri: templeImageSource.uri,
+            type: templeImageSource.type,
+            name: templeImageSource.fileName,
+        });
+        formData.append('spcl_ritual_video', {
+            uri: templeVideoSource.uri,
+            type: templeVideoSource.type,
+            name: templeVideoSource.fileName,
+        });
 
-    // Remove image by index
-    const removeImage = (indexToRemove) => {
-        const updatedImages = templeImages.filter((_, index) => index !== indexToRemove);
-        setTempleImages(updatedImages);
-        setTempleImageCount(updatedImages.length > 0 ? `Select ${updatedImages.length} Images` : 'Select Images');
-    };
-
-    // Remove video by index
-    const removeVideo = (indexToRemove) => {
-        const updatedVideos = templeVideos.filter((_, index) => index !== indexToRemove);
-        const updatedPausedVideos = pausedVideos.filter((_, index) => index !== indexToRemove);
-        setTempleVideos(updatedVideos);
-        setPausedVideos(updatedPausedVideos);
-        setTempleVideoCount(updatedVideos.length > 0 ? `Select ${updatedVideos.length} Videos` : 'Select Videos');
+        try {
+            const response = await axios.post(`${base_url}/api/save-special-ritual`, formData, {
+                headers: {
+                    Authorization: `Bearer ${access_token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+            if (response.status === 200) {
+                Toast.show('Ritual added successfully', Toast.LONG);
+                navigation.goBack();
+            } else {
+                Toast.show('Failed to add ritual', Toast.LONG);
+            }
+        } catch (error) {
+            console.log("error", error);
+            Toast.show('Failed to add ritual', Toast.LONG);
+        }
     };
 
     return (
@@ -222,12 +233,12 @@ const AddRitual = (props) => {
 
                 {/* Image Upload Section */}
                 <View style={styles.cardBox}>
-                    <Text style={styles.subHeaderText}>Ritual Images</Text>
-                    <TouchableOpacity style={styles.filePicker} onPress={selectTempleImages}>
+                    <Text style={styles.subHeaderText}>Upload Ritual Images</Text>
+                    <TouchableOpacity style={styles.filePicker} onPress={selectImage}>
                         <TextInput
                             style={styles.filePickerText}
                             editable={false}
-                            placeholder={templeImageCount}
+                            placeholder={templeImage}
                             placeholderTextColor={'#000'}
                         />
                         <View style={styles.chooseBtn}>
@@ -236,19 +247,20 @@ const AddRitual = (props) => {
                     </TouchableOpacity>
                     {/* Display selected images with remove (cross) icon */}
                     <View style={styles.imagePreviewContainer}>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {templeImages.length > 0 ? (
-                                templeImages.map((image, index) => (
-                                    <View key={index} style={styles.imageWrapper}>
-                                        <Image source={{ uri: image.uri }} style={styles.imagePreview} />
-                                        {/* Cross icon to remove the image */}
-                                        <TouchableOpacity style={styles.removeIcon} onPress={() => removeImage(index)}>
-                                            <Icon name="cancel" size={24} color="red" />
-                                        </TouchableOpacity>
-                                    </View>
-                                ))
-                            ) : null}
-                        </ScrollView>
+                        {templeImageSource ? (
+                            <View style={styles.imageWrapper}>
+                                <Image
+                                    source={{ uri: templeImageSource.uri }}
+                                    style={styles.imagePreview}
+                                />
+                                <TouchableOpacity
+                                    style={styles.removeIcon}
+                                    onPress={() => setTempleImageSource(null)}
+                                >
+                                    <Icon name="close" size={20} color="black" />
+                                </TouchableOpacity>
+                            </View>
+                        ) : null}
                     </View>
                 </View>
 
@@ -259,7 +271,7 @@ const AddRitual = (props) => {
                         <TextInput
                             style={styles.filePickerText}
                             editable={false}
-                            placeholder={templeVideoCount}
+                            placeholder={templeVideo}
                             placeholderTextColor={'#000'}
                         />
                         <View style={styles.chooseBtn}>
@@ -269,33 +281,30 @@ const AddRitual = (props) => {
 
                     {/* Display selected videos with custom play/pause control */}
                     <View style={styles.videoPreviewContainer}>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                            {templeVideos.length > 0 ? (
-                                templeVideos.map((video, index) => (
-                                    <View key={index} style={styles.videoWrapper}>
-                                        <Video
-                                            source={{ uri: video.uri }}
-                                            style={styles.videoPreview}
-                                            paused={pausedVideos[index]} // Control play/pause based on state
-                                            resizeMode="cover"
-                                        />
-                                        {/* Play/Pause button */}
-                                        <TouchableOpacity style={styles.playPauseBtn} onPress={() => togglePlayPause(index)}>
-                                            <Icon name={pausedVideos[index] ? "play-arrow" : "pause"} size={24} color="white" />
-                                        </TouchableOpacity>
-                                        {/* Cross icon to remove the video */}
-                                        <TouchableOpacity style={styles.removeIcon} onPress={() => removeVideo(index)}>
-                                            <Icon name="cancel" size={24} color="red" />
-                                        </TouchableOpacity>
-                                    </View>
-                                ))
-                            ) : null}
-                        </ScrollView>
+                        {templeVideoSource ? (
+                            <View style={styles.videoWrapper}>
+                                <Video
+                                    source={{ uri: templeVideoSource.uri }}
+                                    style={styles.videoPreview}
+                                    paused={videoPaused}
+                                />
+                                <TouchableOpacity
+                                    style={styles.playPauseBtn}
+                                    onPress={() => setVideoPaused(!videoPaused)}
+                                >
+                                    <Icon
+                                        name={videoPaused ? 'play-arrow' : 'pause'}
+                                        size={30}
+                                        color="white"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                        ) : null}
                     </View>
                 </View>
 
                 {/* Submit Button */}
-                <TouchableOpacity onPress={() => props.navigation.navigate('Banner')}>
+                <TouchableOpacity onPress={submitRitual}>
                     <LinearGradient
                         colors={['#c9170a', '#f0837f']}
                         style={styles.submitButton}

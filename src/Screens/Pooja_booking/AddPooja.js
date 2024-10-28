@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { launchImageLibrary } from 'react-native-image-picker';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useNavigation } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
 import { base_url } from '../../../App';
